@@ -7,7 +7,10 @@ import (
 )
 
 func main() {
-	h := server.Default()
+	h := server.Default(
+		server.WithHostPorts("127.0.0.1:8080"),
+		server.WithKeepAlive(true), // 默认就开启长连接
+	)
 
 	register(h)
 	h.Spin()
