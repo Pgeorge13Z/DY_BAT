@@ -25,9 +25,9 @@
 
 ### 说明
 
-cmd里放不同的微服务，比如我做user相关的接口，把user相关的微服务生成后的代码放入cmd的user中
+cmd里放不同的微服务，如kitex生成的handler和server还有client相关的代码
 
-kitex生成的代码都集中放到kitex_gen目录下
+kitex生成的代码的定义部分都集中放到kitex_gen目录下
 
 idl放thrift文件
 
@@ -46,7 +46,7 @@ kitex -module example -service example echo.thrift
 比如我的user服务，kitex -module DY_BAT -service user ../idl/user.thrift 
 ```
 
-hz生成server命令
+hz生成server命令（hz代码可以后面再写，先写kitex的逻辑代码）
 
 ```go
 hz new --idl=../idl/psm.thrift --handler_by_method -t=template=slim

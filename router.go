@@ -3,7 +3,6 @@
 package main
 
 import (
-	"DY_BAT/controller"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
@@ -20,24 +19,5 @@ func customizedRegister(r *server.Hertz) {
 	//auth.GET("/ping", handler.Ping)
 	//
 	//auth.POST("/douyin/publish/action/", controller.Publish)
-
-	douyin := r.Group("/douyin")
-	{
-		// 视频feed流
-		r.GET("/feed", handler.Feed)
-		// 用户
-		userGroup := douyin.Group("/user")
-		{
-			userGroup.POST("/login", handler.UserLogin)
-			userGroup.POST("/register", handler.UserRegister)
-			userGroup.GET("/:id", handler.GetUser)
-		}
-		//	视频投稿和发布
-		publishGroup := douyin.Group("/publish")
-		{
-			publishGroup.POST("/action", handler.Publish)  // 视频发布
-			publishGroup.GET("/list", handler.PublishList) // 发布列表
-		}
-	}
 
 }

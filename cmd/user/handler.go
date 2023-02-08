@@ -1,7 +1,7 @@
 package main
 
 import (
-	user "DY_BAT/kitex_gen/kitex_gen/user"
+	user "DY_BAT/kitex_gen/user"
 	"context"
 )
 
