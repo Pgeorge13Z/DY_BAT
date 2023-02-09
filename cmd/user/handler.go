@@ -2,6 +2,7 @@ package main
 
 import (
 	user "DY_BAT/kitex_gen/user"
+	"DY_BAT/pkg/tools"
 	"context"
 )
 
@@ -14,8 +15,10 @@ func (s *UserServiceImpl) CreateUser(ctx context.Context, req *user.DouyinUserRe
 	rsp := user.NewDouyinUserRegisterResponse()
 
 	username := req.GetUsername()
-
+	password := req.GetPassword()
 	//随机生成salt
+	salt := tools.RandomStringUtil()
+	//密码加密
 
 }
 
