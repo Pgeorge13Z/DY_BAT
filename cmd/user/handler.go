@@ -12,10 +12,11 @@ type UserServiceImpl struct{}
 func (s *UserServiceImpl) CreateUser(ctx context.Context, req *user.DouyinUserRegisterRequest) (resp *user.DouyinUserRegisterResponse, err error) {
 	// TODO: Your code here...
 	rsp := user.NewDouyinUserRegisterResponse()
-	if err := req.IsValid(); err != nil{
-		resp.
-	}
-	return
+
+	username := req.GetUsername()
+
+	//随机生成salt
+
 }
 
 // CheckUser implements the UserServiceImpl interface.
