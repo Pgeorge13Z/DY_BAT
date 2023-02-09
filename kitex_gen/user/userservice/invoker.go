@@ -3,7 +3,7 @@
 package userservice
 
 import (
-	user "DY_BAT/kitex_gen/kitex_gen/user"
+	user "DY_BAT/cmd/user/kitex_gen/user"
 	server "github.com/cloudwego/kitex/server"
 )
 
