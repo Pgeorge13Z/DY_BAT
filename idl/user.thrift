@@ -48,6 +48,8 @@ struct douyin_user_response {
     2: required BaseResp base_resp,
 }
 
+
+
 service UserService {
     douyin_user_register_response UserRegister(1: douyin_user_register_request req),
     douyin_user_login_response UserLogin(1: douyin_user_login_request req),
