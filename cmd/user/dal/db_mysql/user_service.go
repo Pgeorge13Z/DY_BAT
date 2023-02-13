@@ -16,7 +16,7 @@ type UserService interface {
 	UserLogin(username string, password string) (*User, error)
 	UserRegister(username string, password string, salt string) error
 	FindLastUserId() int64
-	GetUserById(userId int64, MyUserid int64) (userResp *user.User, err error)
+	GetUserById(userId int64) (userResp *user.User, err error)
 	UpdateUserFollow(userId int64, followDiff int64) error
 	UpdateUserFollower(userId int64, followDiff int64) error
 }
@@ -76,7 +76,7 @@ func (u *UserServiceImpl) FindLastUserId() int64 {
 
 // 查找用户信息
 
-func (u *UserServiceImpl) GetUserById(userId int64, MyUserid int64) (*user.User, error) {
+func (u *UserServiceImpl) GetUserById(userId int64) (*user.User, error) {
 	userGet, err := u.userDao.FindById(userId)
 	var userResp = user.NewUser()
 	if err == nil {
