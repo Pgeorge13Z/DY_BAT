@@ -13,27 +13,25 @@
 | |__user.thrift
 |__cmd
 | |__user
-| | |__biz
-| | |__hertz_gen
-| | |__hertz_client
-|__kitex_gen
-| |__user
-|__middleware
+| | |___dal
+| | |___kitex_gen
+| | |___handler.go main.go ...
+|__pkg
+| |__consts
+| |__errno
+| |__tools
 |__sql
+| |__script
+| |__sqlcreate
+
+
+
 
 ```
 
-### 说明
 
-cmd里放不同的微服务，如kitex生成的handler和server还有client相关的代码
-
-kitex生成的代码的定义部分都集中放到kitex_gen目录下
-
-idl放thrift文件
-
-sql放sql相关文件
-
-middleware放中间件
+## 注意
+1. Kitex 依赖 Thrift v0.13 ,否则会出现not enough arguments in call to iprot.ReadStructBegin错误
 
 ## 编写微服务的几个步骤
 
@@ -64,7 +62,7 @@ hz client --idl=../idl/psm.thrift --model_dir=hertz_gen -t=template=slim --clien
 
 1. 编写idl（idl官方已经给了，见https://bytedance.feishu.cn/docs/doccnKrCsU5Iac6eftnFBdsXTof#boskXk的三、接口说明)
 2. 假设服务是xx，则新建cmd/xx目录，并在目录下调用kitex代码生成工具。（注意版本需要为v0.4.4.）
-3. 把生成的kitex_gen目录里的内容**移动**到最外层的kitex_gen目录中，其他内容保留在当前目录中即可。
-4. cmd/xx目录中的main.go就是我们的服务端启动的入口。(如果是goland编译器，可以直接点三角号)
-5. 实现业务逻辑。
+3. cmd/xx目录中的main.go就是我们的服务端启动的入口。(如果是goland编译器，可以直接点三角号)
+4. 在handler.go实现业务逻辑。
+5. 运行build.sh会生成output
 
