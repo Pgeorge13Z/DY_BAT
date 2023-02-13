@@ -2,7 +2,7 @@ package main
 
 import (
 	"DY_BAT/cmd/user/dal/db_mysql"
-	user "DY_BAT/kitex_gen/user"
+	user "DY_BAT/cmd/user/kitex_gen/user"
 	"DY_BAT/pkg/tools"
 	"context"
 	"sync/atomic"
@@ -10,34 +10,20 @@ import (
 
 const (
 	success = 0
-	fail    = 1
+	fail    = 0
 )
 
 // UserServiceImpl implements the last service interface defined in the IDL.
 type UserServiceImpl struct{}
 
-// CreateUser implements the UserServiceImpl interface.
-func (s *UserServiceImpl) CreateUser(ctx context.Context, req *user.DouyinUserRegisterRequest) (resp *user.DouyinUserRegisterResponse, err error) {
-	// TODO: Your code here...
-
-	return
-}
-
-// CheckUser implements the UserServiceImpl interface.
-func (s *UserServiceImpl) CheckUser(ctx context.Context, req *user.DouyinUserLoginRequest) (resp *user.DouyinUserLoginResponse, err error) {
-	// TODO: Your code here...
-	return
-}
-
-// QueryCurUser implements the UserServiceImpl interface.
-func (s *UserServiceImpl) QueryCurUser(ctx context.Context, req *user.DouyinUserRequest) (resp *user.DouyinUserResponse, err error) {
-	// TODO: Your code here...
-	return
-}
-
 // UserRegister implements the UserServiceImpl interface.
 func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.DouyinUserRegisterRequest) (resp *user.DouyinUserRegisterResponse, err error) {
 	// TODO: Your code here...
+	return
+}
+
+// UserLogin implements the UserServiceImpl interface.
+func (s *UserServiceImpl) UserLogin(ctx context.Context, req *user.DouyinUserLoginRequest) (resp *user.DouyinUserLoginResponse, err error) {
 	//resp = user.NewDouyinUserRegisterResponse()
 
 	username := req.GetUsername()
@@ -75,29 +61,6 @@ func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.DouyinUser
 		resp.BaseResp.StatusCode = success
 
 	}
-	return resp, err
-}
-
-// UserLogin implements the UserServiceImpl interface.
-func (s *UserServiceImpl) UserLogin(ctx context.Context, req *user.DouyinUserLoginRequest) (resp *user.DouyinUserLoginResponse, err error) {
-	// TODO: Your code here...
-	username := req.GetUsername()
-	password := req.GetPassword()
-	resp = user.NewDouyinUserLoginResponse()
-
-	userResp, err := db_mysql.GetUserService().UserLogin(username, password)
-	if err != nil {
-		msg := "Success failed"
-		resp.BaseResp.StatsuMsg = &msg
-		resp.BaseResp.StatusCode = fail
-	}
-	resp.UserId = userResp.UserId
-	token, _ := tools.GenToken(username, userResp.UserId)
-	resp.Token = token
-	msg := "Success login"
-	resp.BaseResp.StatsuMsg = &msg
-	resp.BaseResp.StatusCode = success
-
 	return resp, err
 }
 

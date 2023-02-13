@@ -1,7 +1,7 @@
 package db_mysql
 
 import (
-	"DY_BAT/kitex_gen/user"
+	"DY_BAT/cmd/user/kitex_gen/user"
 	"DY_BAT/pkg/tools"
 	"errors"
 	"sync"

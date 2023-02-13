@@ -1,7 +1,7 @@
 package main
 
 import (
-	user "DY_BAT/kitex_gen/user/userservice"
+	user "DY_BAT/cmd/user/kitex_gen/user/userservice"
 	"log"
 )
 
