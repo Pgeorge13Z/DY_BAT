@@ -3,8 +3,8 @@
 package followservice
 
 import (
+	follow "DY_BAT/cmd/follow/kitex_gen/follow"
 	"context"
-	follow "followservice/kitex_gen/follow"
 	client "github.com/cloudwego/kitex/client"
 	callopt "github.com/cloudwego/kitex/client/callopt"
 )

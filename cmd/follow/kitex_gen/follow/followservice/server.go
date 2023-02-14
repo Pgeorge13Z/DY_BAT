@@ -2,7 +2,7 @@
 package followservice
 
 import (
-	follow "followservice/kitex_gen/follow"
+	follow "DY_BAT/cmd/follow/kitex_gen/follow"
 	server "github.com/cloudwego/kitex/server"
 )
 

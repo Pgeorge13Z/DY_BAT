@@ -1,7 +1,7 @@
 package main
 
 import (
-	follow "followservice/kitex_gen/follow/followservice"
+	follow "DY_BAT/cmd/follow/kitex_gen/follow/followservice"
 	"log"
 )
 
