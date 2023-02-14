@@ -17,6 +17,17 @@ func FindRelation(userId int64, targetId int64) (*Follow, error) {
 	return &follow, nil
 }
 
+func IfFollow(userId int64, targetId int64) (bool, error) {
+	follow, err := FindRelation(userId, targetId)
+	if err != nil {
+		return false, err
+	}
+	if follow == nil || follow.Cancel != 0 {
+		return false, nil
+	}
+	return true, nil
+}
+
 // 插入user关注target的数据
 func InserFollowRelation(userId int64, targetId int64) (bool, error) {
 	follow := Follow{
