@@ -22,18 +22,18 @@ func (s *FollowServiceImpl) FollowList(ctx context.Context, req *follow.DouyinFo
 
 	//调用数据库层函数，返回关注的id数组
 	ids, err := dao.FindFollowIds(req.UserId)
-	rsp := follow.NewDouyinFollowListResponse()
+	//	rsp := follow.NewDouyinFollowListResponse()
 	if nil != err {
-		rsp.StatusCode = 1
-		rsp.StatusMsg = err.Error()
-		rsp.UserList = nil
-		return rsp, nil
+		resp.StatusCode = 1
+		resp.StatusMsg = err.Error()
+		resp.UserList = nil
+		return resp, nil
 	}
 	//id为空，返回
 	if nil == ids {
-		rsp.StatusCode = 0
-		rsp.StatusMsg = ""
-		rsp.UserList = nil
+		resp.StatusCode = 0
+		resp.StatusMsg = ""
+		resp.UserList = nil
 	}
 	//通过id数组获取对应的用户信息，构建用户信息数组
 	size := len(ids)
@@ -57,10 +57,10 @@ func (s *FollowServiceImpl) FollowList(ctx context.Context, req *follow.DouyinFo
 		i++
 	}
 	wg.Wait()
-	rsp.StatusCode = 0
-	rsp.StatusMsg = ""
-	rsp.UserList = users
-	return rsp, nil
+	resp.StatusCode = 0
+	resp.StatusMsg = ""
+	resp.UserList = users
+	return resp, nil
 }
 
 // FollowAction implements the FollowServiceImpl interface.
@@ -74,26 +74,26 @@ func (s *FollowServiceImpl) FollowAction(ctx context.Context, req *follow.Douyin
 	targetId := req.ToUserId
 	//查询数据库表中是否有两者关注记录
 	relation, err := dao.FindRelation(userId, targetId)
-	rsp := follow.NewDouyinFollowActionResponse()
+	//rsp := follow.NewDouyinFollowActionResponse()
 	//如果记录不为空，更新记录即可
 	if relation != nil {
 		_, err := dao.UpdateFollowRelation(userId, targetId, 1)
 		if err != nil {
-			rsp.StatusCode = 1
-			rsp.StatusMsg = err.Error()
-			return rsp, nil
+			resp.StatusCode = 1
+			resp.StatusMsg = err.Error()
+			return resp, nil
 		}
-		rsp.StatusCode = 0
-		rsp.StatusMsg = "follow successfully"
-		return rsp, nil
+		resp.StatusCode = 0
+		resp.StatusMsg = "follow successfully"
+		return resp, nil
 	}
 	//如果记录为空，插入关注关系
 	if _, err := dao.InserFollowRelation(userId, targetId); err != nil {
-		rsp.StatusCode = 1
-		rsp.StatusMsg = err.Error()
-		return rsp, nil
+		resp.StatusCode = 1
+		resp.StatusMsg = err.Error()
+		return resp, nil
 	}
 	resp.StatusCode = 0
 	resp.StatusMsg = "follow successfully"
-	return rsp, nil
+	return resp, nil
 }

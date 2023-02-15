@@ -17,6 +17,7 @@ func FindRelation(userId int64, targetId int64) (*Follow, error) {
 	return &follow, nil
 }
 
+//查询userid是否关注targetid
 func IfFollow(userId int64, targetId int64) (bool, error) {
 	follow, err := FindRelation(userId, targetId)
 	if err != nil {
