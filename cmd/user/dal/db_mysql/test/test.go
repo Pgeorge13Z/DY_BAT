@@ -4,12 +4,16 @@ import (
 	"DY_BAT/cmd/user/dal/db_mysql"
 	constants "DY_BAT/pkg/consts"
 	sqlscript "DY_BAT/sql/script"
+	"fmt"
 )
 
 func main() {
 	sqlscript.InitDB(constants.MySQLDefaultDSN)
-	db := sqlscript.GetDB()
-	db.AutoMigrate(&db_mysql.User{})
+	//db := sqlscript.GetDB()
+	//db.AutoMigrate(&db_mysql.User{})
+
+	id := db_mysql.GetUserService().FindLastUserId()
+	fmt.Println(id)
 
 	//创建
 	//user := db_mysql.User{
@@ -21,6 +25,7 @@ func main() {
 	//	FollowCount:   10,
 	//	FollowerCount: 100,
 	//}
+
 	//
 	//db.Create(user)
 	//db.Model(&db_mysql.User{}).Create(user)

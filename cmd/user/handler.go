@@ -18,8 +18,8 @@ type UserServiceImpl struct{}
 
 // UserRegister implements the UserServiceImpl interface.
 func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.DouyinUserRegisterRequest) (resp *user.DouyinUserRegisterResponse, err error) {
-	// TODO: Your code here...
-
+	var msg string
+	resp = &user.DouyinUserRegisterResponse{BaseResp: &user.BaseResp{StatsuMsg: &msg}}
 	username := req.GetUsername()
 	password := req.GetPassword()
 	//随机生成salt
@@ -32,22 +32,22 @@ func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.DouyinUser
 
 	//注册用户
 	err = db_mysql.GetUserService().UserRegister(username, password, salt)
-
+	//
 	if err != nil {
 		resp.UserId = 0
-		msg := err.Error()
+		msg = err.Error()
 		resp.BaseResp.StatsuMsg = &msg
 		resp.BaseResp.StatusCode = fail
 
 	} else {
 		token, err := tools.GenToken(username, userIdSequence)
 		if err != nil {
-			msg := "token generation failed" + err.Error()
+			msg = "token generation failed" + err.Error()
 			resp.BaseResp.StatsuMsg = &msg
 			resp.BaseResp.StatusCode = fail
 		}
 
-		msg := "UserRegister successfully"
+		msg = "UserRegister successfully"
 		atomic.AddInt64(&userIdSequence, 1)
 		resp.UserId = userIdSequence
 		resp.Token = token
@@ -55,8 +55,11 @@ func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.DouyinUser
 		resp.BaseResp.StatusCode = success
 
 	}
+
+	msg = "UserRegister successfully"
+	resp.BaseResp.StatsuMsg = &msg
+	resp.BaseResp.StatusCode = success
 	return resp, err
-	return
 }
 
 // UserLogin implements the UserServiceImpl interface.
