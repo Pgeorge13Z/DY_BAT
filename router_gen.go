@@ -10,7 +10,9 @@ import (
 // register registers all routers.
 func register(r *server.Hertz) {
 
+	// idl 中定义的路由
 	router.GeneratedRegister(r)
 
+	// 用户自定义路由
 	customizedRegister(r)
 }
