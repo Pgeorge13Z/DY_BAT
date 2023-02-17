@@ -3,12 +3,14 @@
 package main
 
 import (
+	"DY_BAT/cmd/api/biz/rpc"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
 func main() {
-	h := server.Default()
 
+	h := server.Default()
+	rpc.InitUser()
 	register(h)
 	h.Spin()
 }

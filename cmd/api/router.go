@@ -3,13 +3,13 @@
 package main
 
 import (
-	handler "DY_BAT/biz/handler"
+	handler "DY_BAT/cmd/api/biz/handler"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
 // customizeRegister registers customize routers.
 func customizedRegister(r *server.Hertz) {
 	r.GET("/ping", handler.Ping)
-
+	//r.GET("/ping", handler.Ping)
 	// your code ...
 }

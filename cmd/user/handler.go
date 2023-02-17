@@ -35,6 +35,7 @@ func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.DouyinUser
 	//
 	if err != nil {
 		resp.UserId = 0
+		resp.Token = " "
 		msg = err.Error()
 		resp.BaseResp.StatsuMsg = &msg
 		resp.BaseResp.StatusCode = fail
@@ -42,6 +43,8 @@ func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.DouyinUser
 	} else {
 		token, err := tools.GenToken(username, userIdSequence)
 		if err != nil {
+			resp.UserId = 0
+			resp.Token = " "
 			msg = "token generation failed" + err.Error()
 			resp.BaseResp.StatsuMsg = &msg
 			resp.BaseResp.StatusCode = fail

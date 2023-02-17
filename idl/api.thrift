@@ -40,7 +40,7 @@ struct douyin_user_login_response {
 }
 
 // 用户信息
-struct DouyinUserRequest{
+struct Douyin_User_Request{
     1: required i64 user_id (api.query="user_id") //用户id
     2: required string token (api.query="token") //用户token
 }
@@ -48,4 +48,12 @@ struct DouyinUserRequest{
 struct douyin_user_response {
     1: required User user,          // 用户信息
     2: required BaseResp base_resp,
+}
+
+service ApiService {
+    // user
+    douyin_user_register_response UserRegister(1: douyin_user_register_request req) (api.post="/douyin/user/register/")
+    douyin_user_login_response UserLogin(1: douyin_user_login_request req) (api.post="/douyin/user/login/")
+    douyin_user_response UserInfo(1: Douyin_User_Request req) (api.get="/douyin/user/")
+
 }

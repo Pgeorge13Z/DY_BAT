@@ -51,7 +51,7 @@ func (u *UserServiceImpl) UserRegister(username string, password string, salt st
 	//判断用户是否已经注册
 	_, err := u.userDao.FindByName(username)
 	if err == nil {
-		return errors.New("userAdd does not exist")
+		return errors.New("user is already exist , don't register again")
 	}
 	//添加用户
 	userAdd := User{

@@ -3,7 +3,7 @@
 package main
 
 import (
-	router "DY_BAT/biz/router"
+	router "DY_BAT/cmd/api/biz/router"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 

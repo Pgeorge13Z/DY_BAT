@@ -36,7 +36,7 @@ func main() {
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: consts.UserServiceName}),
 		server.WithServiceAddr(&net.TCPAddr{Port: consts.UserServicePort}),
 		server.WithLimit(&limit.Option{MaxConnections: 1000, MaxQPS: 200}),
-		//server.WithMuxTransport(),
+		server.WithMuxTransport(),
 		server.WithRegistry(r),
 	)
 
