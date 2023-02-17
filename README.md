@@ -9,21 +9,104 @@
 暂时如下：
 ```go
 .
-|__idl
-| |__user.thrift
-|__cmd
-| |__user
-| | |___dal
-| | |___kitex_gen
-| | |___handler.go main.go ...
-|__pkg
-| |__consts
-| |__errno
-| |__tools
-|__sql
-| |__script
-| |__sqlcreate
-
+├── cmd
+│   ├── api
+│   │   ├── biz
+│   │   │   ├── handler
+│   │   │   │   ├── api
+│   │   │   │   │   └── api_service.go
+│   │   │   │   └── ping.go
+│   │   │   ├── model
+│   │   │   │   └── api
+│   │   │   │       └── api.go
+│   │   │   ├── router
+│   │   │   │   ├── api
+│   │   │   │   │   ├── api.go
+│   │   │   │   │   └── middleware.go
+│   │   │   │   └── register.go
+│   │   │   └── rpc
+│   │   │       └── user.go
+│   │   ├── main.go
+│   │   ├── router_gen.go
+│   │   └── router.go
+│   ├── follow
+│   │   ├── build.sh
+│   │   ├── dao
+│   │   │   ├── follow.go
+│   │   │   ├── init.go
+│   │   │   └── test.db
+│   │   ├── follow.thrift
+│   │   ├── handler.go
+│   │   ├── kitex_gen
+│   │   │   └── follow
+│   │   │       ├── follow.go
+│   │   │       ├── followservice
+│   │   │       │   ├── client.go
+│   │   │       │   ├── followservice.go
+│   │   │       │   ├── invoker.go
+│   │   │       │   └── server.go
+│   │   │       ├── k-consts.go
+│   │   │       └── k-follow.go
+│   │   ├── kitex.yaml
+│   │   ├── main.go
+│   │   └── script
+│   │       └── bootstrap.sh
+│   └── user
+│       ├── build.sh
+│       ├── client
+│       │   └── client.go
+│       ├── dal
+│       │   ├── db_mysql
+│       │   │   ├── test
+│       │   │   │   └── test.go
+│       │   │   ├── user_dao.go
+│       │   │   ├── user_model.go
+│       │   │   └── user_service.go
+│       │   └── init.go
+│       ├── handler.go
+│       ├── kitex_gen
+│       │   └── user
+│       │       ├── k-consts.go
+│       │       ├── k-user.go
+│       │       ├── user.go
+│       │       └── userservice
+│       │           ├── client.go
+│       │           ├── invoker.go
+│       │           ├── server.go
+│       │           └── userservice.go
+│       ├── kitex.yaml
+│       ├── main.go
+│       ├── output
+│       │   ├── bin
+│       │   │   └── user
+│       │   └── bootstrap.sh
+│       └── script
+│           └── bootstrap.sh
+├── docker-compose.yml
+├── go.mod
+├── go.sum
+├── idl
+│   ├── api.thrift
+│   ├── follow.thrift
+│   └── user.thrift
+├── middleware
+│   └── middleware.md
+├── pkg
+│   ├── consts
+│   │   └── constants.go
+│   ├── errno
+│   │   └── errnos.go
+│   └── tools
+│       ├── encode.go
+│       ├── JWT.go
+│       └── random_string.go
+├── README.md
+└── sql
+    ├── script
+    │   └── db_init.go
+    └── sqlcreate
+        ├── database.sql
+        └── user.sql
 
 
 
@@ -66,3 +149,14 @@ hz client --idl=../idl/psm.thrift --model_dir=hertz_gen -t=template=slim --clien
 4. 在handler.go实现业务逻辑。
 5. 运行build.sh会生成output
 
+
+## 编写http服务的几个步骤
+1. 修改idl/api.thrift文件，将自己的结构体和方法写进去
+
+2. 进入cmd/api, hz update -idl ../../idl/api.thrift 
+
+3. 进入cmd/api/biz/rpc,写自己的http请求
+
+4. 进入cmd/api/biz/handler/api,在api_service里更改自己的方法部分
+
+**先在自己的分支上进行update,测试成功后再提交到主分支**
