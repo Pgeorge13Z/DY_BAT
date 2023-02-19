@@ -5,6 +5,7 @@ import (
 	user "DY_BAT/cmd/user/kitex_gen/user"
 	"DY_BAT/pkg/tools"
 	"context"
+	"fmt"
 	"sync/atomic"
 )
 
@@ -48,15 +49,15 @@ func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.DouyinUser
 			msg = "token generation failed" + err.Error()
 			resp.BaseResp.StatsuMsg = &msg
 			resp.BaseResp.StatusCode = fail
+		} else {
+			msg = "UserRegister successfully"
+			//此处有一个bug,记录个数为0和1的时候，主键都为1，因此第一条记录的id为2，本项目将第一条记录内置，因此默认是从第二条记录开始使用.
+			atomic.AddInt64(&userIdSequence, 1)
+			resp.UserId = userIdSequence
+			resp.Token = token
+			resp.BaseResp.StatsuMsg = &msg
+			resp.BaseResp.StatusCode = success
 		}
-
-		msg = "UserRegister successfully"
-		//此处有一个bug,记录个数为0和1的时候，主键都为1，因此第一条记录的id为2，本项目将第一条记录内置，因此默认是从第二条记录开始使用.
-		atomic.AddInt64(&userIdSequence, 1)
-		resp.UserId = userIdSequence
-		resp.Token = token
-		resp.BaseResp.StatsuMsg = &msg
-		resp.BaseResp.StatusCode = success
 
 	}
 
@@ -78,13 +79,15 @@ func (s *UserServiceImpl) UserLogin(ctx context.Context, req *user.DouyinUserLog
 		msg = "Success failed"
 		resp.BaseResp.StatsuMsg = &msg
 		resp.BaseResp.StatusCode = fail
+	} else {
+		resp.UserId = userResp.UserId
+		token, _ := tools.GenToken(username, userResp.UserId)
+		fmt.Println("token: ", token)
+		resp.Token = token
+		msg = "Success login"
+		resp.BaseResp.StatsuMsg = &msg
+		resp.BaseResp.StatusCode = success
 	}
-	resp.UserId = userResp.UserId
-	token, _ := tools.GenToken(username, userResp.UserId)
-	resp.Token = token
-	msg = "Success login"
-	resp.BaseResp.StatsuMsg = &msg
-	resp.BaseResp.StatusCode = success
 
 	return resp, err
 }
@@ -93,19 +96,35 @@ func (s *UserServiceImpl) UserLogin(ctx context.Context, req *user.DouyinUserLog
 func (s *UserServiceImpl) UserInfo(ctx context.Context, req *user.DouyinUserRequest) (resp *user.DouyinUserResponse, err error) {
 	// TODO: Your code here...
 	UserId := req.GetUserId()
+	UserToken := req.GetToken()
+
 	var msg string
-	resp = &user.DouyinUserResponse{BaseResp: &user.BaseResp{StatsuMsg: &msg}}
+	resp = &user.DouyinUserResponse{
+		BaseResp: &user.BaseResp{StatsuMsg: &msg},
+		User:     &user.User{},
+	}
 
 	userRsp, err := db_mysql.GetUserService().GetUserById(UserId)
+
+	claims, _ := tools.ParseToken(UserToken)
+	TokenName := claims.Username
+	fmt.Println(TokenName)
+	fmt.Println(userRsp.Name)
+
 	if err != nil {
 		msg := "Get UserInfo fail"
 		resp.BaseResp.StatsuMsg = &msg
 		resp.BaseResp.StatusCode = fail
+	} else if userRsp.Name != TokenName {
+		msg := "your token dont have access"
+		resp.BaseResp.StatsuMsg = &msg
+		resp.BaseResp.StatusCode = fail
+	} else {
+		resp.User = userRsp
+		msg = "Get Userinfo success"
+		resp.BaseResp.StatsuMsg = &msg
+		resp.BaseResp.StatusCode = success
 	}
-	resp.User = userRsp
-	msg = "Get Userinfo success"
-	resp.BaseResp.StatsuMsg = &msg
-	resp.BaseResp.StatusCode = success
 
 	return resp, err
 }

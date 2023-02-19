@@ -41,6 +41,8 @@ struct douyin_user_login_response {
 // 用户信息
 struct douyin_user_request {
     1: required i64 user_id ( vt.gt = "0" ), // 用户id
+    2: required string token,// 用户鉴权token
+
 }
 
 struct douyin_user_response {

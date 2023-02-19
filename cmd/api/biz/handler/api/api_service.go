@@ -25,9 +25,10 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 	}
 
 	resp := &api.DouyinUserRegisterResponse{BaseResp: &api.BaseResp{StatsuMsg: &msg}}
-	username := c.Query("username")
-	password := c.Query("password")
-
+	//username := c.Query("username")
+	username := req.Username
+	//password := c.Query("password")
+	password := req.Password
 	//
 	userResp, _ := rpc.RegisterUser(ctx, &user.DouyinUserRegisterRequest{
 		Username: username,
@@ -77,11 +78,19 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-
 	//resp := new(api.DouyinUserResponse)
-	resp := &api.DouyinUserResponse{BaseResp: &api.BaseResp{StatsuMsg: &msg},User:}
-
-	resp, err := rpc.GetUserInfo(ctx, )
+	resp := &api.DouyinUserResponse{BaseResp: &api.BaseResp{StatsuMsg: &msg}, User: api.NewUser()}
+	//Userid := c.Query("user_id")
+	Userid := req.GetUserID()
+	UserToken := req.GetToken()
+	userResp, err := rpc.GetUserInfo(ctx, &user.DouyinUserRequest{UserId: Userid, Token: UserToken})
+	resp.BaseResp.StatsuMsg = userResp.BaseResp.StatsuMsg
+	resp.BaseResp.StatusCode = userResp.BaseResp.StatusCode
+	resp.User.Name = userResp.User.Name
+	resp.User.ID = userResp.User.Id
+	resp.User.FollowerCount = userResp.User.FollowerCount
+	resp.User.FollowCount = userResp.User.FollowCount
+	resp.User.IsFollow = userResp.User.IsFollow
 
 	c.JSON(consts.StatusOK, resp)
 }

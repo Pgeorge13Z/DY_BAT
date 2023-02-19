@@ -52,6 +52,7 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	fmt.Println(client)
 	//UserRegisterRequest := user.NewDouyinUserRegisterRequest()
 	//UserRegisterRequest.Username = "zxj6"
 	//UserRegisterRequest.Password = "1412"
@@ -77,7 +78,8 @@ func main() {
 	//fmt.Println(*resp.BaseResp.StatsuMsg)
 
 	UserRequest := user.NewDouyinUserRequest()
-	UserRequest.UserId = 2
+	UserRequest.UserId = 7
+	UserRequest.Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Inp4ajYiLCJ1c2VyX2lkIjo3LCJpc3MiOiJ6eGoiLCJleHAiOjE2NzY4OTcyMjZ9.csaZd7ADUzyuU26-gHs3TPBi8CLtzvGIfMg74AAHG4Q"
 	resp, err := client.UserInfo(context.Background(), UserRequest)
 	if err != nil {
 		log.Fatalln("client userInfo fail")
@@ -85,7 +87,7 @@ func main() {
 		return
 	}
 
-	fmt.Println(*resp.BaseResp.StatsuMsg)
+	//fmt.Println(*resp.BaseResp.StatsuMsg)
 	fmt.Printf("%#v", resp.User)
 
 }
