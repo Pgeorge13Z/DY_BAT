@@ -2,7 +2,8 @@ package tools
 
 import (
 	"bytes"
-	"golang.org/x/crypto/bcrypt"
+	"crypto/md5"
+	"fmt"
 )
 
 func Md5Util(password string, salt string) string {
@@ -13,13 +14,13 @@ func Md5Util(password string, salt string) string {
 	str := bt.String()
 
 	data := []byte(str)
-	//has := md5.Sum(data)
+	has := md5.Sum(data)
 	////md5可以改成bcrypt或者scrypt,bcrypt和scrypt的慢速hash算法可以有效防止暴力破解密码
-	//md5str := fmt.Sprintf("%x", has) //将[]byte转成16进制
+	md5str := fmt.Sprintf("%x", has) //将[]byte转成16进制
 
 	//用bcrypt加密
-	hash, _ := bcrypt.GenerateFromPassword(data, bcrypt.DefaultCost)
+	//hash, _ := bcrypt.GenerateFromPassword(data, bcrypt.DefaultCost)
 	//用scrypt加密
 	//hash, _ := scrypt.Key(data, []byte(salt), 16384, 8, 1, 32)
-	return string(hash)
+	return md5str
 }

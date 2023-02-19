@@ -51,6 +51,7 @@ func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.DouyinUser
 		}
 
 		msg = "UserRegister successfully"
+		//此处有一个bug,记录个数为0和1的时候，主键都为1，因此第一条记录的id为2，本项目将第一条记录内置，因此默认是从第二条记录开始使用.
 		atomic.AddInt64(&userIdSequence, 1)
 		resp.UserId = userIdSequence
 		resp.Token = token
@@ -67,43 +68,24 @@ func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.DouyinUser
 
 // UserLogin implements the UserServiceImpl interface.
 func (s *UserServiceImpl) UserLogin(ctx context.Context, req *user.DouyinUserLoginRequest) (resp *user.DouyinUserLoginResponse, err error) {
-	//resp = user.NewDouyinUserRegisterResponse()
-
+	var msg string
+	resp = &user.DouyinUserLoginResponse{BaseResp: &user.BaseResp{StatsuMsg: &msg}}
 	username := req.GetUsername()
 	password := req.GetPassword()
-	//随机生成salt
-	salt := tools.RandomStringUtil()
-	//密码加密,内部实现改成了用bcrypt加密
-	password = tools.Md5Util(password, salt)
-
-	//更新用户ID
-	userIdSequence := db_mysql.GetUserService().FindLastUserId()
-
-	//注册用户
-	err = db_mysql.GetUserService().UserRegister(username, password, salt)
-
+	userResp, err := db_mysql.GetUserService().UserLogin(username, password)
+	//
 	if err != nil {
-		resp.UserId = 0
-		msg := err.Error()
+		msg = "Success failed"
 		resp.BaseResp.StatsuMsg = &msg
 		resp.BaseResp.StatusCode = fail
-
-	} else {
-		token, err := tools.GenToken(username, userIdSequence)
-		if err != nil {
-			msg := "token generation failed" + err.Error()
-			resp.BaseResp.StatsuMsg = &msg
-			resp.BaseResp.StatusCode = fail
-		}
-
-		msg := "UserRegister successfully"
-		atomic.AddInt64(&userIdSequence, 1)
-		resp.UserId = userIdSequence
-		resp.Token = token
-		resp.BaseResp.StatsuMsg = &msg
-		resp.BaseResp.StatusCode = success
-
 	}
+	resp.UserId = userResp.UserId
+	token, _ := tools.GenToken(username, userResp.UserId)
+	resp.Token = token
+	msg = "Success login"
+	resp.BaseResp.StatsuMsg = &msg
+	resp.BaseResp.StatusCode = success
+
 	return resp, err
 }
 
@@ -111,7 +93,8 @@ func (s *UserServiceImpl) UserLogin(ctx context.Context, req *user.DouyinUserLog
 func (s *UserServiceImpl) UserInfo(ctx context.Context, req *user.DouyinUserRequest) (resp *user.DouyinUserResponse, err error) {
 	// TODO: Your code here...
 	UserId := req.GetUserId()
-	resp = user.NewDouyinUserResponse()
+	var msg string
+	resp = &user.DouyinUserResponse{BaseResp: &user.BaseResp{StatsuMsg: &msg}}
 
 	userRsp, err := db_mysql.GetUserService().GetUserById(UserId)
 	if err != nil {
@@ -120,7 +103,7 @@ func (s *UserServiceImpl) UserInfo(ctx context.Context, req *user.DouyinUserRequ
 		resp.BaseResp.StatusCode = fail
 	}
 	resp.User = userRsp
-	msg := "Get Userinfo success"
+	msg = "Get Userinfo success"
 	resp.BaseResp.StatsuMsg = &msg
 	resp.BaseResp.StatusCode = success
 

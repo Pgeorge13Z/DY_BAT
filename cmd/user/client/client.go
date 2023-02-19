@@ -52,16 +52,40 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	UserRegisterRequest := user.NewDouyinUserRegisterRequest()
-	UserRegisterRequest.Username = "zxj6"
-	UserRegisterRequest.Password = "1412"
-	resp, err := client.UserRegister(context.Background(), UserRegisterRequest)
+	//UserRegisterRequest := user.NewDouyinUserRegisterRequest()
+	//UserRegisterRequest.Username = "zxj6"
+	//UserRegisterRequest.Password = "1412"
+	//resp, err := client.UserRegister(context.Background(), UserRegisterRequest)
+	//if err != nil {
+	//	log.Fatalln("client userRegister fail")
+	//	log.Fatalln(err)
+	//	return
+	//}
+	//
+	//log.Println(*resp.BaseResp.StatsuMsg)
+
+	//LoginRequest := user.NewDouyinUserLoginRequest()
+	//LoginRequest.Username = "zxj"
+	//LoginRequest.Password = "123"
+	//resp, err := client.UserLogin(context.Background(), LoginRequest)
+	//if err != nil {
+	//	log.Fatalln("client userlogin fail")
+	//	log.Fatalln(err)
+	//	return
+	//}
+	//
+	//fmt.Println(*resp.BaseResp.StatsuMsg)
+
+	UserRequest := user.NewDouyinUserRequest()
+	UserRequest.UserId = 2
+	resp, err := client.UserInfo(context.Background(), UserRequest)
 	if err != nil {
-		log.Fatalln("client userRegister fail")
+		log.Fatalln("client userInfo fail")
 		log.Fatalln(err)
 		return
 	}
 
-	log.Println(*resp.BaseResp.StatsuMsg)
+	fmt.Println(*resp.BaseResp.StatsuMsg)
+	fmt.Printf("%#v", resp.User)
 
 }

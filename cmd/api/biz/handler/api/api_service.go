@@ -11,6 +11,8 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
+var msg string
+
 // UserRegister .
 // @router /douyin/user/register/ [POST]
 func UserRegister(ctx context.Context, c *app.RequestContext) {
@@ -22,7 +24,6 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	var msg string
 	resp := &api.DouyinUserRegisterResponse{BaseResp: &api.BaseResp{StatsuMsg: &msg}}
 	username := c.Query("username")
 	password := c.Query("password")
@@ -51,8 +52,17 @@ func UserLogin(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := new(api.DouyinUserLoginResponse)
-
+	resp := &api.DouyinUserLoginResponse{BaseResp: &api.BaseResp{StatsuMsg: &msg}}
+	username := c.Query("username")
+	password := c.Query("password")
+	userResp, _ := rpc.LoginUser(ctx, &user.DouyinUserLoginRequest{
+		Username: username,
+		Password: password,
+	})
+	resp.BaseResp.StatsuMsg = userResp.BaseResp.StatsuMsg
+	resp.BaseResp.StatusCode = userResp.BaseResp.StatusCode
+	resp.Token = userResp.Token
+	resp.UserID = userResp.UserId
 	c.JSON(consts.StatusOK, resp)
 }
 
@@ -67,7 +77,11 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := new(api.DouyinUserResponse)
+
+	//resp := new(api.DouyinUserResponse)
+	resp := &api.DouyinUserResponse{BaseResp: &api.BaseResp{StatsuMsg: &msg},User:}
+
+	resp, err := rpc.GetUserInfo(ctx, )
 
 	c.JSON(consts.StatusOK, resp)
 }
