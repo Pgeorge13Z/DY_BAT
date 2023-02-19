@@ -949,9 +949,10 @@ func (p *DouyinUserRegisterRequest) Field2DeepEqual(src string) bool {
 }
 
 type DouyinUserRegisterResponse struct {
-	UserId   int64     `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
-	Token    string    `thrift:"token,2,required" frugal:"2,required,string" json:"token"`
-	BaseResp *BaseResp `thrift:"base_resp,3,required" frugal:"3,required,BaseResp" json:"base_resp"`
+	StatusCode int32   `thrift:"status_code,1,required" frugal:"1,required,i32" json:"status_code"`
+	StatusMsg  *string `thrift:"status_msg,2,optional" frugal:"2,optional,string" json:"status_msg,omitempty"`
+	UserId     int64   `thrift:"user_id,3,required" frugal:"3,required,i64" json:"user_id"`
+	Token      string  `thrift:"token,4,required" frugal:"4,required,string" json:"token"`
 }
 
 func NewDouyinUserRegisterResponse() *DouyinUserRegisterResponse {
@@ -962,6 +963,19 @@ func (p *DouyinUserRegisterResponse) InitDefault() {
 	*p = DouyinUserRegisterResponse{}
 }
 
+func (p *DouyinUserRegisterResponse) GetStatusCode() (v int32) {
+	return p.StatusCode
+}
+
+var DouyinUserRegisterResponse_StatusMsg_DEFAULT string
+
+func (p *DouyinUserRegisterResponse) GetStatusMsg() (v string) {
+	if !p.IsSetStatusMsg() {
+		return DouyinUserRegisterResponse_StatusMsg_DEFAULT
+	}
+	return *p.StatusMsg
+}
+
 func (p *DouyinUserRegisterResponse) GetUserId() (v int64) {
 	return p.UserId
 }
@@ -969,14 +983,11 @@ func (p *DouyinUserRegisterResponse) GetUserId() (v int64) {
 func (p *DouyinUserRegisterResponse) GetToken() (v string) {
 	return p.Token
 }
-
-var DouyinUserRegisterResponse_BaseResp_DEFAULT *BaseResp
-
-func (p *DouyinUserRegisterResponse) GetBaseResp() (v *BaseResp) {
-	if !p.IsSetBaseResp() {
-		return DouyinUserRegisterResponse_BaseResp_DEFAULT
-	}
-	return p.BaseResp
+func (p *DouyinUserRegisterResponse) SetStatusCode(val int32) {
+	p.StatusCode = val
+}
+func (p *DouyinUserRegisterResponse) SetStatusMsg(val *string) {
+	p.StatusMsg = val
 }
 func (p *DouyinUserRegisterResponse) SetUserId(val int64) {
 	p.UserId = val
@@ -984,27 +995,25 @@ func (p *DouyinUserRegisterResponse) SetUserId(val int64) {
 func (p *DouyinUserRegisterResponse) SetToken(val string) {
 	p.Token = val
 }
-func (p *DouyinUserRegisterResponse) SetBaseResp(val *BaseResp) {
-	p.BaseResp = val
-}
 
 var fieldIDToName_DouyinUserRegisterResponse = map[int16]string{
-	1: "user_id",
-	2: "token",
-	3: "base_resp",
+	1: "status_code",
+	2: "status_msg",
+	3: "user_id",
+	4: "token",
 }
 
-func (p *DouyinUserRegisterResponse) IsSetBaseResp() bool {
-	return p.BaseResp != nil
+func (p *DouyinUserRegisterResponse) IsSetStatusMsg() bool {
+	return p.StatusMsg != nil
 }
 
 func (p *DouyinUserRegisterResponse) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
+	var issetStatusCode bool = false
 	var issetUserId bool = false
 	var issetToken bool = false
-	var issetBaseResp bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -1021,11 +1030,11 @@ func (p *DouyinUserRegisterResponse) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetUserId = true
+				issetStatusCode = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -1036,18 +1045,28 @@ func (p *DouyinUserRegisterResponse) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetToken = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
 				}
 			}
 		case 3:
-			if fieldTypeId == thrift.STRUCT {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetBaseResp = true
+				issetUserId = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 4:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField4(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetToken = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -1067,18 +1086,18 @@ func (p *DouyinUserRegisterResponse) Read(iprot thrift.TProtocol) (err error) {
 		goto ReadStructEndError
 	}
 
-	if !issetUserId {
+	if !issetStatusCode {
 		fieldId = 1
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetToken {
-		fieldId = 2
+	if !issetUserId {
+		fieldId = 3
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetBaseResp {
-		fieldId = 3
+	if !issetToken {
+		fieldId = 4
 		goto RequiredFieldNotSetError
 	}
 	return nil
@@ -1100,10 +1119,10 @@ RequiredFieldNotSetError:
 }
 
 func (p *DouyinUserRegisterResponse) ReadField1(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadI64(); err != nil {
+	if v, err := iprot.ReadI32(); err != nil {
 		return err
 	} else {
-		p.UserId = v
+		p.StatusCode = v
 	}
 	return nil
 }
@@ -1112,15 +1131,25 @@ func (p *DouyinUserRegisterResponse) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Token = v
+		p.StatusMsg = &v
 	}
 	return nil
 }
 
 func (p *DouyinUserRegisterResponse) ReadField3(iprot thrift.TProtocol) error {
-	p.BaseResp = NewBaseResp()
-	if err := p.BaseResp.Read(iprot); err != nil {
+	if v, err := iprot.ReadI64(); err != nil {
 		return err
+	} else {
+		p.UserId = v
+	}
+	return nil
+}
+
+func (p *DouyinUserRegisterResponse) ReadField4(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Token = v
 	}
 	return nil
 }
@@ -1143,6 +1172,10 @@ func (p *DouyinUserRegisterResponse) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 3
 			goto WriteFieldError
 		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
+			goto WriteFieldError
+		}
 
 	}
 	if err = oprot.WriteFieldStop(); err != nil {
@@ -1163,10 +1196,10 @@ WriteStructEndError:
 }
 
 func (p *DouyinUserRegisterResponse) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("user_id", thrift.I64, 1); err != nil {
+	if err = oprot.WriteFieldBegin("status_code", thrift.I32, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.UserId); err != nil {
+	if err := oprot.WriteI32(p.StatusCode); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1180,14 +1213,16 @@ WriteFieldEndError:
 }
 
 func (p *DouyinUserRegisterResponse) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("token", thrift.STRING, 2); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Token); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetStatusMsg() {
+		if err = oprot.WriteFieldBegin("status_msg", thrift.STRING, 2); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.StatusMsg); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1197,10 +1232,10 @@ WriteFieldEndError:
 }
 
 func (p *DouyinUserRegisterResponse) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("base_resp", thrift.STRUCT, 3); err != nil {
+	if err = oprot.WriteFieldBegin("user_id", thrift.I64, 3); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := p.BaseResp.Write(oprot); err != nil {
+	if err := oprot.WriteI64(p.UserId); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1211,6 +1246,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *DouyinUserRegisterResponse) writeField4(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("token", thrift.STRING, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Token); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
 }
 
 func (p *DouyinUserRegisterResponse) String() string {
@@ -1226,35 +1278,50 @@ func (p *DouyinUserRegisterResponse) DeepEqual(ano *DouyinUserRegisterResponse) 
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.UserId) {
+	if !p.Field1DeepEqual(ano.StatusCode) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.Token) {
+	if !p.Field2DeepEqual(ano.StatusMsg) {
 		return false
 	}
-	if !p.Field3DeepEqual(ano.BaseResp) {
+	if !p.Field3DeepEqual(ano.UserId) {
+		return false
+	}
+	if !p.Field4DeepEqual(ano.Token) {
 		return false
 	}
 	return true
 }
 
-func (p *DouyinUserRegisterResponse) Field1DeepEqual(src int64) bool {
+func (p *DouyinUserRegisterResponse) Field1DeepEqual(src int32) bool {
+
+	if p.StatusCode != src {
+		return false
+	}
+	return true
+}
+func (p *DouyinUserRegisterResponse) Field2DeepEqual(src *string) bool {
+
+	if p.StatusMsg == src {
+		return true
+	} else if p.StatusMsg == nil || src == nil {
+		return false
+	}
+	if strings.Compare(*p.StatusMsg, *src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *DouyinUserRegisterResponse) Field3DeepEqual(src int64) bool {
 
 	if p.UserId != src {
 		return false
 	}
 	return true
 }
-func (p *DouyinUserRegisterResponse) Field2DeepEqual(src string) bool {
+func (p *DouyinUserRegisterResponse) Field4DeepEqual(src string) bool {
 
 	if strings.Compare(p.Token, src) != 0 {
-		return false
-	}
-	return true
-}
-func (p *DouyinUserRegisterResponse) Field3DeepEqual(src *BaseResp) bool {
-
-	if !p.BaseResp.DeepEqual(src) {
 		return false
 	}
 	return true
@@ -1499,9 +1566,10 @@ func (p *DouyinUserLoginRequest) Field2DeepEqual(src string) bool {
 }
 
 type DouyinUserLoginResponse struct {
-	UserId   int64     `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
-	Token    string    `thrift:"token,2,required" frugal:"2,required,string" json:"token"`
-	BaseResp *BaseResp `thrift:"base_resp,3,required" frugal:"3,required,BaseResp" json:"base_resp"`
+	StatusCode int32   `thrift:"status_code,1,required" frugal:"1,required,i32" json:"status_code"`
+	StatusMsg  *string `thrift:"status_msg,2,optional" frugal:"2,optional,string" json:"status_msg,omitempty"`
+	UserId     int64   `thrift:"user_id,3,required" frugal:"3,required,i64" json:"user_id"`
+	Token      string  `thrift:"token,4,required" frugal:"4,required,string" json:"token"`
 }
 
 func NewDouyinUserLoginResponse() *DouyinUserLoginResponse {
@@ -1512,6 +1580,19 @@ func (p *DouyinUserLoginResponse) InitDefault() {
 	*p = DouyinUserLoginResponse{}
 }
 
+func (p *DouyinUserLoginResponse) GetStatusCode() (v int32) {
+	return p.StatusCode
+}
+
+var DouyinUserLoginResponse_StatusMsg_DEFAULT string
+
+func (p *DouyinUserLoginResponse) GetStatusMsg() (v string) {
+	if !p.IsSetStatusMsg() {
+		return DouyinUserLoginResponse_StatusMsg_DEFAULT
+	}
+	return *p.StatusMsg
+}
+
 func (p *DouyinUserLoginResponse) GetUserId() (v int64) {
 	return p.UserId
 }
@@ -1519,14 +1600,11 @@ func (p *DouyinUserLoginResponse) GetUserId() (v int64) {
 func (p *DouyinUserLoginResponse) GetToken() (v string) {
 	return p.Token
 }
-
-var DouyinUserLoginResponse_BaseResp_DEFAULT *BaseResp
-
-func (p *DouyinUserLoginResponse) GetBaseResp() (v *BaseResp) {
-	if !p.IsSetBaseResp() {
-		return DouyinUserLoginResponse_BaseResp_DEFAULT
-	}
-	return p.BaseResp
+func (p *DouyinUserLoginResponse) SetStatusCode(val int32) {
+	p.StatusCode = val
+}
+func (p *DouyinUserLoginResponse) SetStatusMsg(val *string) {
+	p.StatusMsg = val
 }
 func (p *DouyinUserLoginResponse) SetUserId(val int64) {
 	p.UserId = val
@@ -1534,27 +1612,25 @@ func (p *DouyinUserLoginResponse) SetUserId(val int64) {
 func (p *DouyinUserLoginResponse) SetToken(val string) {
 	p.Token = val
 }
-func (p *DouyinUserLoginResponse) SetBaseResp(val *BaseResp) {
-	p.BaseResp = val
-}
 
 var fieldIDToName_DouyinUserLoginResponse = map[int16]string{
-	1: "user_id",
-	2: "token",
-	3: "base_resp",
+	1: "status_code",
+	2: "status_msg",
+	3: "user_id",
+	4: "token",
 }
 
-func (p *DouyinUserLoginResponse) IsSetBaseResp() bool {
-	return p.BaseResp != nil
+func (p *DouyinUserLoginResponse) IsSetStatusMsg() bool {
+	return p.StatusMsg != nil
 }
 
 func (p *DouyinUserLoginResponse) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
+	var issetStatusCode bool = false
 	var issetUserId bool = false
 	var issetToken bool = false
-	var issetBaseResp bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -1571,11 +1647,11 @@ func (p *DouyinUserLoginResponse) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetUserId = true
+				issetStatusCode = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -1586,18 +1662,28 @@ func (p *DouyinUserLoginResponse) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetToken = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
 				}
 			}
 		case 3:
-			if fieldTypeId == thrift.STRUCT {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetBaseResp = true
+				issetUserId = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 4:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField4(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetToken = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -1617,18 +1703,18 @@ func (p *DouyinUserLoginResponse) Read(iprot thrift.TProtocol) (err error) {
 		goto ReadStructEndError
 	}
 
-	if !issetUserId {
+	if !issetStatusCode {
 		fieldId = 1
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetToken {
-		fieldId = 2
+	if !issetUserId {
+		fieldId = 3
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetBaseResp {
-		fieldId = 3
+	if !issetToken {
+		fieldId = 4
 		goto RequiredFieldNotSetError
 	}
 	return nil
@@ -1650,10 +1736,10 @@ RequiredFieldNotSetError:
 }
 
 func (p *DouyinUserLoginResponse) ReadField1(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadI64(); err != nil {
+	if v, err := iprot.ReadI32(); err != nil {
 		return err
 	} else {
-		p.UserId = v
+		p.StatusCode = v
 	}
 	return nil
 }
@@ -1662,15 +1748,25 @@ func (p *DouyinUserLoginResponse) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Token = v
+		p.StatusMsg = &v
 	}
 	return nil
 }
 
 func (p *DouyinUserLoginResponse) ReadField3(iprot thrift.TProtocol) error {
-	p.BaseResp = NewBaseResp()
-	if err := p.BaseResp.Read(iprot); err != nil {
+	if v, err := iprot.ReadI64(); err != nil {
 		return err
+	} else {
+		p.UserId = v
+	}
+	return nil
+}
+
+func (p *DouyinUserLoginResponse) ReadField4(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Token = v
 	}
 	return nil
 }
@@ -1693,6 +1789,10 @@ func (p *DouyinUserLoginResponse) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 3
 			goto WriteFieldError
 		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
+			goto WriteFieldError
+		}
 
 	}
 	if err = oprot.WriteFieldStop(); err != nil {
@@ -1713,10 +1813,10 @@ WriteStructEndError:
 }
 
 func (p *DouyinUserLoginResponse) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("user_id", thrift.I64, 1); err != nil {
+	if err = oprot.WriteFieldBegin("status_code", thrift.I32, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.UserId); err != nil {
+	if err := oprot.WriteI32(p.StatusCode); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1730,14 +1830,16 @@ WriteFieldEndError:
 }
 
 func (p *DouyinUserLoginResponse) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("token", thrift.STRING, 2); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Token); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetStatusMsg() {
+		if err = oprot.WriteFieldBegin("status_msg", thrift.STRING, 2); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.StatusMsg); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1747,10 +1849,10 @@ WriteFieldEndError:
 }
 
 func (p *DouyinUserLoginResponse) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("base_resp", thrift.STRUCT, 3); err != nil {
+	if err = oprot.WriteFieldBegin("user_id", thrift.I64, 3); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := p.BaseResp.Write(oprot); err != nil {
+	if err := oprot.WriteI64(p.UserId); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1761,6 +1863,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *DouyinUserLoginResponse) writeField4(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("token", thrift.STRING, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Token); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
 }
 
 func (p *DouyinUserLoginResponse) String() string {
@@ -1776,35 +1895,50 @@ func (p *DouyinUserLoginResponse) DeepEqual(ano *DouyinUserLoginResponse) bool {
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.UserId) {
+	if !p.Field1DeepEqual(ano.StatusCode) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.Token) {
+	if !p.Field2DeepEqual(ano.StatusMsg) {
 		return false
 	}
-	if !p.Field3DeepEqual(ano.BaseResp) {
+	if !p.Field3DeepEqual(ano.UserId) {
+		return false
+	}
+	if !p.Field4DeepEqual(ano.Token) {
 		return false
 	}
 	return true
 }
 
-func (p *DouyinUserLoginResponse) Field1DeepEqual(src int64) bool {
+func (p *DouyinUserLoginResponse) Field1DeepEqual(src int32) bool {
+
+	if p.StatusCode != src {
+		return false
+	}
+	return true
+}
+func (p *DouyinUserLoginResponse) Field2DeepEqual(src *string) bool {
+
+	if p.StatusMsg == src {
+		return true
+	} else if p.StatusMsg == nil || src == nil {
+		return false
+	}
+	if strings.Compare(*p.StatusMsg, *src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *DouyinUserLoginResponse) Field3DeepEqual(src int64) bool {
 
 	if p.UserId != src {
 		return false
 	}
 	return true
 }
-func (p *DouyinUserLoginResponse) Field2DeepEqual(src string) bool {
+func (p *DouyinUserLoginResponse) Field4DeepEqual(src string) bool {
 
 	if strings.Compare(p.Token, src) != 0 {
-		return false
-	}
-	return true
-}
-func (p *DouyinUserLoginResponse) Field3DeepEqual(src *BaseResp) bool {
-
-	if !p.BaseResp.DeepEqual(src) {
 		return false
 	}
 	return true
@@ -2049,8 +2183,9 @@ func (p *DouyinUserRequest) Field2DeepEqual(src string) bool {
 }
 
 type DouyinUserResponse struct {
-	User     *User     `thrift:"user,1,required" frugal:"1,required,User" json:"user"`
-	BaseResp *BaseResp `thrift:"base_resp,2,required" frugal:"2,required,BaseResp" json:"base_resp"`
+	StatusCode int32   `thrift:"status_code,1,required" frugal:"1,required,i32" json:"status_code"`
+	StatusMsg  *string `thrift:"status_msg,2,optional" frugal:"2,optional,string" json:"status_msg,omitempty"`
+	User       *User   `thrift:"user,3,required" frugal:"3,required,User" json:"user"`
 }
 
 func NewDouyinUserResponse() *DouyinUserResponse {
@@ -2061,6 +2196,19 @@ func (p *DouyinUserResponse) InitDefault() {
 	*p = DouyinUserResponse{}
 }
 
+func (p *DouyinUserResponse) GetStatusCode() (v int32) {
+	return p.StatusCode
+}
+
+var DouyinUserResponse_StatusMsg_DEFAULT string
+
+func (p *DouyinUserResponse) GetStatusMsg() (v string) {
+	if !p.IsSetStatusMsg() {
+		return DouyinUserResponse_StatusMsg_DEFAULT
+	}
+	return *p.StatusMsg
+}
+
 var DouyinUserResponse_User_DEFAULT *User
 
 func (p *DouyinUserResponse) GetUser() (v *User) {
@@ -2069,41 +2217,36 @@ func (p *DouyinUserResponse) GetUser() (v *User) {
 	}
 	return p.User
 }
-
-var DouyinUserResponse_BaseResp_DEFAULT *BaseResp
-
-func (p *DouyinUserResponse) GetBaseResp() (v *BaseResp) {
-	if !p.IsSetBaseResp() {
-		return DouyinUserResponse_BaseResp_DEFAULT
-	}
-	return p.BaseResp
+func (p *DouyinUserResponse) SetStatusCode(val int32) {
+	p.StatusCode = val
+}
+func (p *DouyinUserResponse) SetStatusMsg(val *string) {
+	p.StatusMsg = val
 }
 func (p *DouyinUserResponse) SetUser(val *User) {
 	p.User = val
 }
-func (p *DouyinUserResponse) SetBaseResp(val *BaseResp) {
-	p.BaseResp = val
-}
 
 var fieldIDToName_DouyinUserResponse = map[int16]string{
-	1: "user",
-	2: "base_resp",
+	1: "status_code",
+	2: "status_msg",
+	3: "user",
+}
+
+func (p *DouyinUserResponse) IsSetStatusMsg() bool {
+	return p.StatusMsg != nil
 }
 
 func (p *DouyinUserResponse) IsSetUser() bool {
 	return p.User != nil
 }
 
-func (p *DouyinUserResponse) IsSetBaseResp() bool {
-	return p.BaseResp != nil
-}
-
 func (p *DouyinUserResponse) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
+	var issetStatusCode bool = false
 	var issetUser bool = false
-	var issetBaseResp bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -2120,22 +2263,32 @@ func (p *DouyinUserResponse) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRUCT {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetUser = true
+				issetStatusCode = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
 				}
 			}
 		case 2:
-			if fieldTypeId == thrift.STRUCT {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetBaseResp = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 3:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetUser = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -2155,13 +2308,13 @@ func (p *DouyinUserResponse) Read(iprot thrift.TProtocol) (err error) {
 		goto ReadStructEndError
 	}
 
-	if !issetUser {
+	if !issetStatusCode {
 		fieldId = 1
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetBaseResp {
-		fieldId = 2
+	if !issetUser {
+		fieldId = 3
 		goto RequiredFieldNotSetError
 	}
 	return nil
@@ -2183,16 +2336,26 @@ RequiredFieldNotSetError:
 }
 
 func (p *DouyinUserResponse) ReadField1(iprot thrift.TProtocol) error {
-	p.User = NewUser()
-	if err := p.User.Read(iprot); err != nil {
+	if v, err := iprot.ReadI32(); err != nil {
 		return err
+	} else {
+		p.StatusCode = v
 	}
 	return nil
 }
 
 func (p *DouyinUserResponse) ReadField2(iprot thrift.TProtocol) error {
-	p.BaseResp = NewBaseResp()
-	if err := p.BaseResp.Read(iprot); err != nil {
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.StatusMsg = &v
+	}
+	return nil
+}
+
+func (p *DouyinUserResponse) ReadField3(iprot thrift.TProtocol) error {
+	p.User = NewUser()
+	if err := p.User.Read(iprot); err != nil {
 		return err
 	}
 	return nil
@@ -2210,6 +2373,10 @@ func (p *DouyinUserResponse) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
 			goto WriteFieldError
 		}
 
@@ -2232,10 +2399,10 @@ WriteStructEndError:
 }
 
 func (p *DouyinUserResponse) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("user", thrift.STRUCT, 1); err != nil {
+	if err = oprot.WriteFieldBegin("status_code", thrift.I32, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := p.User.Write(oprot); err != nil {
+	if err := oprot.WriteI32(p.StatusCode); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2249,10 +2416,29 @@ WriteFieldEndError:
 }
 
 func (p *DouyinUserResponse) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("base_resp", thrift.STRUCT, 2); err != nil {
+	if p.IsSetStatusMsg() {
+		if err = oprot.WriteFieldBegin("status_msg", thrift.STRING, 2); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.StatusMsg); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *DouyinUserResponse) writeField3(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("user", thrift.STRUCT, 3); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := p.BaseResp.Write(oprot); err != nil {
+	if err := p.User.Write(oprot); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2260,9 +2446,9 @@ func (p *DouyinUserResponse) writeField2(oprot thrift.TProtocol) (err error) {
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
 func (p *DouyinUserResponse) String() string {
@@ -2278,25 +2464,40 @@ func (p *DouyinUserResponse) DeepEqual(ano *DouyinUserResponse) bool {
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.User) {
+	if !p.Field1DeepEqual(ano.StatusCode) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.BaseResp) {
+	if !p.Field2DeepEqual(ano.StatusMsg) {
+		return false
+	}
+	if !p.Field3DeepEqual(ano.User) {
 		return false
 	}
 	return true
 }
 
-func (p *DouyinUserResponse) Field1DeepEqual(src *User) bool {
+func (p *DouyinUserResponse) Field1DeepEqual(src int32) bool {
+
+	if p.StatusCode != src {
+		return false
+	}
+	return true
+}
+func (p *DouyinUserResponse) Field2DeepEqual(src *string) bool {
+
+	if p.StatusMsg == src {
+		return true
+	} else if p.StatusMsg == nil || src == nil {
+		return false
+	}
+	if strings.Compare(*p.StatusMsg, *src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *DouyinUserResponse) Field3DeepEqual(src *User) bool {
 
 	if !p.User.DeepEqual(src) {
-		return false
-	}
-	return true
-}
-func (p *DouyinUserResponse) Field2DeepEqual(src *BaseResp) bool {
-
-	if !p.BaseResp.DeepEqual(src) {
 		return false
 	}
 	return true

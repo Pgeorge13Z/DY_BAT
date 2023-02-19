@@ -21,9 +21,10 @@ struct douyin_user_register_request {
 }
 
 struct douyin_user_register_response {
-    1: required i64 user_id,        // 用户id
-    2: required string token,       // 用户鉴权token
-    3: required BaseResp base_resp,
+    1: required i32 status_code
+    2: optional string status_msg
+    3: required i64 user_id,        // 用户id
+    4: required string token,       // 用户鉴权token
 }
 
 // 用户登陆接口
@@ -33,9 +34,10 @@ struct douyin_user_login_request {
 }
 
 struct douyin_user_login_response {
-    1: required i64 user_id,        // 用户id
-    2: required string token,       // 用户鉴权token
-    3: required BaseResp base_resp,
+    1: required i32 status_code
+    2: optional string status_msg
+    3: required i64 user_id,        // 用户id
+    4: required string token,       // 用户鉴权token
 }
 
 // 用户信息
@@ -46,8 +48,9 @@ struct douyin_user_request {
 }
 
 struct douyin_user_response {
-    1: required User user,          // 用户信息
-    2: required BaseResp base_resp,
+    1: required i32 status_code
+    2: optional string status_msg
+    3: required User user,          // 用户信息
 }
 
 

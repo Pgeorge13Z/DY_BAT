@@ -20,7 +20,7 @@ type UserServiceImpl struct{}
 // UserRegister implements the UserServiceImpl interface.
 func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.DouyinUserRegisterRequest) (resp *user.DouyinUserRegisterResponse, err error) {
 	var msg string
-	resp = &user.DouyinUserRegisterResponse{BaseResp: &user.BaseResp{StatsuMsg: &msg}}
+	resp = &user.DouyinUserRegisterResponse{StatusMsg: &msg}
 	username := req.GetUsername()
 	password := req.GetPassword()
 	//随机生成salt
@@ -38,8 +38,8 @@ func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.DouyinUser
 		resp.UserId = 0
 		resp.Token = " "
 		msg = err.Error()
-		resp.BaseResp.StatsuMsg = &msg
-		resp.BaseResp.StatusCode = fail
+		resp.StatusMsg = &msg
+		resp.StatusCode = fail
 
 	} else {
 		token, err := tools.GenToken(username, userIdSequence)
@@ -47,46 +47,46 @@ func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.DouyinUser
 			resp.UserId = 0
 			resp.Token = " "
 			msg = "token generation failed" + err.Error()
-			resp.BaseResp.StatsuMsg = &msg
-			resp.BaseResp.StatusCode = fail
+			resp.StatusMsg = &msg
+			resp.StatusCode = fail
 		} else {
 			msg = "UserRegister successfully"
 			//此处有一个bug,记录个数为0和1的时候，主键都为1，因此第一条记录的id为2，本项目将第一条记录内置，因此默认是从第二条记录开始使用.
 			atomic.AddInt64(&userIdSequence, 1)
 			resp.UserId = userIdSequence
 			resp.Token = token
-			resp.BaseResp.StatsuMsg = &msg
-			resp.BaseResp.StatusCode = success
+			resp.StatusMsg = &msg
+			resp.StatusCode = success
 		}
 
 	}
 
 	msg = "UserRegister successfully"
-	resp.BaseResp.StatsuMsg = &msg
-	resp.BaseResp.StatusCode = success
+	resp.StatusMsg = &msg
+	resp.StatusCode = success
 	return resp, err
 }
 
 // UserLogin implements the UserServiceImpl interface.
 func (s *UserServiceImpl) UserLogin(ctx context.Context, req *user.DouyinUserLoginRequest) (resp *user.DouyinUserLoginResponse, err error) {
 	var msg string
-	resp = &user.DouyinUserLoginResponse{BaseResp: &user.BaseResp{StatsuMsg: &msg}}
+	resp = &user.DouyinUserLoginResponse{StatusMsg: &msg}
 	username := req.GetUsername()
 	password := req.GetPassword()
 	userResp, err := db_mysql.GetUserService().UserLogin(username, password)
 	//
 	if err != nil {
 		msg = "Success failed"
-		resp.BaseResp.StatsuMsg = &msg
-		resp.BaseResp.StatusCode = fail
+		resp.StatusMsg = &msg
+		resp.StatusCode = fail
 	} else {
 		resp.UserId = userResp.UserId
 		token, _ := tools.GenToken(username, userResp.UserId)
 		fmt.Println("token: ", token)
 		resp.Token = token
 		msg = "Success login"
-		resp.BaseResp.StatsuMsg = &msg
-		resp.BaseResp.StatusCode = success
+		resp.StatusMsg = &msg
+		resp.StatusCode = success
 	}
 
 	return resp, err
@@ -100,30 +100,28 @@ func (s *UserServiceImpl) UserInfo(ctx context.Context, req *user.DouyinUserRequ
 
 	var msg string
 	resp = &user.DouyinUserResponse{
-		BaseResp: &user.BaseResp{StatsuMsg: &msg},
-		User:     &user.User{},
+		StatusMsg: &msg,
+		User:      &user.User{},
 	}
 
 	userRsp, err := db_mysql.GetUserService().GetUserById(UserId)
 
 	claims, _ := tools.ParseToken(UserToken)
 	TokenName := claims.Username
-	fmt.Println(TokenName)
-	fmt.Println(userRsp.Name)
 
 	if err != nil {
 		msg := "Get UserInfo fail"
-		resp.BaseResp.StatsuMsg = &msg
-		resp.BaseResp.StatusCode = fail
+		resp.StatusMsg = &msg
+		resp.StatusCode = fail
 	} else if userRsp.Name != TokenName {
 		msg := "your token dont have access"
-		resp.BaseResp.StatsuMsg = &msg
-		resp.BaseResp.StatusCode = fail
+		resp.StatusMsg = &msg
+		resp.StatusCode = fail
 	} else {
 		resp.User = userRsp
 		msg = "Get Userinfo success"
-		resp.BaseResp.StatsuMsg = &msg
-		resp.BaseResp.StatusCode = success
+		resp.StatusMsg = &msg
+		resp.StatusCode = success
 	}
 
 	return resp, err

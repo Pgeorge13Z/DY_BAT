@@ -10,10 +10,6 @@ struct User {
 
 
 // 基础返回信息 包括状态码和状态描述
-struct BaseResp {
-    1: required i32 status_code,   // 状态码，0-成功，其他值-失败
-    2: optional string statsu_msg, // 返回状态描述
-}
 
 // 用户注册接口
 struct douyin_user_register_request {
@@ -22,9 +18,10 @@ struct douyin_user_register_request {
 }
 
 struct douyin_user_register_response {
-    1: required i64 user_id,        // 用户id
-    2: required string token,       // 用户鉴权token
-    3: required BaseResp base_resp,
+    1: required i32 status_code
+    2: optional string status_msg
+    3: required i64 user_id,        // 用户id
+    4: required string token,       // 用户鉴权token
 }
 
 // 用户登陆接口
@@ -34,9 +31,10 @@ struct douyin_user_login_request {
 }
 
 struct douyin_user_login_response {
-    1: required i64 user_id,        // 用户id
-    2: required string token,       // 用户鉴权token
-    3: required BaseResp base_resp,
+    1: required i32 status_code
+    2: optional string status_msg
+    3: required i64 user_id,        // 用户id
+    4: required string token,       // 用户鉴权token
 }
 
 // 用户信息
@@ -46,8 +44,9 @@ struct Douyin_User_Request{
 }
 
 struct douyin_user_response {
-    1: required User user,          // 用户信息
-    2: required BaseResp base_resp,
+    1: required i32 status_code
+    2: optional string status_msg
+    3: required User user,          // 用户信息
 }
 
 service ApiService {

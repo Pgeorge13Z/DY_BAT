@@ -37,9 +37,10 @@ func RegisterUser(ctx context.Context, req *user.DouyinUserRegisterRequest) (r *
 	if err != nil {
 		msg := "userClient Register fail"
 		return &user.DouyinUserRegisterResponse{
-			UserId:   0,
-			Token:    "",
-			BaseResp: &user.BaseResp{StatusCode: 1, StatsuMsg: &msg},
+			UserId:     0,
+			Token:      "",
+			StatusCode: 1,
+			StatusMsg:  &msg,
 		}, err
 	}
 
@@ -52,9 +53,10 @@ func LoginUser(ctx context.Context, req *user.DouyinUserLoginRequest) (r *user.D
 	if err != nil {
 		msg := "userClient Login fail"
 		return &user.DouyinUserLoginResponse{
-			UserId:   0,
-			Token:    "",
-			BaseResp: &user.BaseResp{StatusCode: 1, StatsuMsg: &msg},
+			UserId:     0,
+			Token:      "",
+			StatusCode: 1,
+			StatusMsg:  &msg,
 		}, err
 	}
 	return resp, err
@@ -65,8 +67,9 @@ func GetUserInfo(ctx context.Context, req *user.DouyinUserRequest) (r *user.Douy
 	if err != nil {
 		msg := "userClient GetInfo fail"
 		return &user.DouyinUserResponse{
-			BaseResp: &user.BaseResp{StatusCode: 1, StatsuMsg: &msg},
-			User:     user.NewUser(),
+			StatusCode: 1,
+			StatusMsg:  &msg,
+			User:       user.NewUser(),
 		}, err
 	}
 	return resp, err

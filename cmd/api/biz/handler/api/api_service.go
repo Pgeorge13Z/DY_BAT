@@ -24,7 +24,7 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := &api.DouyinUserRegisterResponse{BaseResp: &api.BaseResp{StatsuMsg: &msg}}
+	resp := &api.DouyinUserRegisterResponse{StatusMsg: &msg}
 	//username := c.Query("username")
 	username := req.Username
 	//password := c.Query("password")
@@ -34,8 +34,8 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 		Username: username,
 		Password: password,
 	})
-	resp.BaseResp.StatsuMsg = userResp.BaseResp.StatsuMsg
-	resp.BaseResp.StatusCode = userResp.BaseResp.StatusCode
+	resp.StatusMsg = userResp.StatusMsg
+	resp.StatusCode = userResp.StatusCode
 	resp.Token = userResp.Token
 	resp.UserID = userResp.UserId
 	////
@@ -53,15 +53,15 @@ func UserLogin(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := &api.DouyinUserLoginResponse{BaseResp: &api.BaseResp{StatsuMsg: &msg}}
+	resp := &api.DouyinUserLoginResponse{StatusMsg: &msg}
 	username := c.Query("username")
 	password := c.Query("password")
 	userResp, _ := rpc.LoginUser(ctx, &user.DouyinUserLoginRequest{
 		Username: username,
 		Password: password,
 	})
-	resp.BaseResp.StatsuMsg = userResp.BaseResp.StatsuMsg
-	resp.BaseResp.StatusCode = userResp.BaseResp.StatusCode
+	resp.StatusMsg = userResp.StatusMsg
+	resp.StatusCode = userResp.StatusCode
 	resp.Token = userResp.Token
 	resp.UserID = userResp.UserId
 	c.JSON(consts.StatusOK, resp)
@@ -79,13 +79,13 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 	}
 
 	//resp := new(api.DouyinUserResponse)
-	resp := &api.DouyinUserResponse{BaseResp: &api.BaseResp{StatsuMsg: &msg}, User: api.NewUser()}
+	resp := &api.DouyinUserResponse{StatusMsg: &msg, User: api.NewUser()}
 	//Userid := c.Query("user_id")
 	Userid := req.GetUserID()
 	UserToken := req.GetToken()
 	userResp, err := rpc.GetUserInfo(ctx, &user.DouyinUserRequest{UserId: Userid, Token: UserToken})
-	resp.BaseResp.StatsuMsg = userResp.BaseResp.StatsuMsg
-	resp.BaseResp.StatusCode = userResp.BaseResp.StatusCode
+	resp.StatusMsg = userResp.StatusMsg
+	resp.StatusCode = userResp.StatusCode
 	resp.User.Name = userResp.User.Name
 	resp.User.ID = userResp.User.Id
 	resp.User.FollowerCount = userResp.User.FollowerCount
