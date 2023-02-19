@@ -6,5 +6,12 @@ import (
 )
 
 func TestGenToken(t *testing.T) {
-	fmt.Println(GenToken("1", 2))
+	Token, _ := GenToken("zxj6", 7)
+
+	fmt.Println(Token)
+
+	fmt.Println(ParseToken(Token))
+	claims, _ := ParseToken(Token)
+	fmt.Println(claims.Username)
+	fmt.Println(claims.User_id)
 }
