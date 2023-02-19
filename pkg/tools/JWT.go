@@ -17,18 +17,17 @@ var CustomSecret = []byte("BAT_DY")
 
 func GenToken(username string, userid int64) (string, error) {
 	cliams := CustomClaims{
-		Username: username,
-		User_id:  userid,
-		RegisteredClaims: jwt.RegisteredClaims{
+		username,
+		userid, // 自定义字段
+		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
 			Issuer:    "zxj", // 签发人
-
 		},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, cliams)
 
-	return token.SignedString(CustomClaims{})
+	return token.SignedString(CustomSecret)
 }
 
 // ParseToken 解析JWT
