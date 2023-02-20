@@ -7,6 +7,7 @@ import (
 	"DY_BAT/cmd/api/biz/rpc"
 	"DY_BAT/cmd/user/kitex_gen/user"
 	"context"
+	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
@@ -91,6 +92,15 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 	resp.User.FollowerCount = userResp.User.FollowerCount
 	resp.User.FollowCount = userResp.User.FollowCount
 	resp.User.IsFollow = userResp.User.IsFollow
+	fmt.Println(resp.User.IsFollow)
+	resp.User.Avatar = userResp.User.Avatar
+	fmt.Println(resp.User.Avatar)
+	resp.User.BackgroundImage = userResp.User.BackgroundImage
+	resp.User.Signature = userResp.User.Signature
+	resp.User.TotaolFavorited = userResp.User.TotaolFavorited
+	resp.User.WorkCount = userResp.User.WorkCount
+	resp.User.FavoriteCount = userResp.User.FavoriteCount
+	fmt.Printf("%#v", resp)
 
 	c.JSON(consts.StatusOK, resp)
 }

@@ -85,6 +85,12 @@ func (u *UserServiceImpl) GetUserById(userId int64) (*user.User, error) {
 		userResp.Name = userGet.Username
 		userResp.FollowCount = &userGet.FollowCount
 		userResp.FollowerCount = &userGet.FollowerCount
+		userResp.Avatar = &userGet.Avatar
+		userResp.BackgroundImage = &userGet.BackgroundImage
+		userResp.Signature = &userGet.Signature
+		userResp.TotaolFavorited = &userGet.TotalFavorite
+		userResp.WorkCount = &userGet.workCount
+		userResp.FavoriteCount = &userGet.favoriteCount
 		//if isFollow, err := rpc.ExistRelation(MyUserid, userId); err == nil {
 		//	userResp.IsFollow = isFollow
 		//} else {
