@@ -153,7 +153,8 @@ hz client --idl=../idl/psm.thrift --model_dir=hertz_gen -t=template=slim --clien
 ## 编写http服务的几个步骤
 1. 修改idl/api.thrift文件，将自己的结构体和方法写进去
 
-2. 进入cmd/api, hz update -idl ../../idl/api.thrift 
+2. ~~进入cmd/api, hz update -idl ../../idl/api.thrift~~   
+    测试update命令不成功，我是重新生成然后修改的。
 
 3. 进入cmd/api/biz/rpc,写自己的http请求
 
