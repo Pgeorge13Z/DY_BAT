@@ -10,4 +10,9 @@ const (
 	//user
 	UserServiceName = "user_service"
 	UserServicePort = 9001
+
+	//comment
+	ValidComment   = 1 //评论状态：有效
+	InvalidComment = 2 //评论状态：取消
+	DateTime       = "2006-01-02 15:04:05"
 )
