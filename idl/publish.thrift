@@ -1,5 +1,4 @@
-
-namespace go feed
+namespace go publish
 
 struct Video {
     1: required i64 id,             // 视频唯一表示
@@ -27,25 +26,30 @@ struct User {
 }
 
 
-// 基础返回信息 包括状态码和状态描述
-struct BaseResp {
+struct douyin_publish_action_request  {
+    1:required string token;
+    2:required binary  data;
+    3:required string title;
+}
+
+struct douyin_publish_action_response  {
     1: required i32 status_code,   // 状态码，0-成功，其他值-失败
     2: optional string statsu_msg, // 返回状态描述
 }
 
-// 视频流接口
-struct douyin_feed_request {
-    1: optional i64 latest_time,        // 可选参数，限制返回视频的最新投稿时间戳，精确到秒，不填表示当前时间
-    2: optional string token,
+struct douyin_publish_list_request  {
+       1: required i64 user_id ( vt.gt = "0" )
+       2: required string token
 }
 
-struct douyin_feed_response {
-    1: required i32 status_code,
-    2: optional string status_msg,
-    3: required list<Video> vedio_list, // 视频列表
-    4: optional i64 next_time,         // 本次返回的视频中，发布最早的时间，作为下次请求时的latest_time
+struct douyin_publish_list_response   {
+    1: required i32 status_code,   // 状态码，0-成功，其他值-失败
+    2: optional string statsu_msg, // 返回状态描述
+    3: required list<Video> video_list,
 }
 
-service FeedService {
-    douyin_feed_response GetUserFeed(1:douyin_feed_request req)
+
+service PublishService {
+    douyin_publish_action_response PublishAction(1: douyin_publish_action_request req)
+    douyin_publish_list_response PublishList(1: douyin_publish_list_request req)
 }
