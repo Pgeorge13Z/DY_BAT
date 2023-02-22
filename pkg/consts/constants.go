@@ -10,4 +10,8 @@ const (
 	//user
 	UserServiceName = "user_service"
 	UserServicePort = 9001
+
+	//publish
+	PublishServiceName = "publish_service"
+	PublishServicePort = 9002
 )

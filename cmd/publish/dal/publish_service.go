@@ -1,6 +1,7 @@
 package dal
 
 import (
+	"DY_BAT/cmd/publish/kitex_gen/publish"
 	sqlscript "DY_BAT/sql/script"
 	"fmt"
 	"gorm.io/gorm"
@@ -13,7 +14,8 @@ var (
 )
 
 type VideoService interface {
-	PublishVideo(video *Video) error
+	PublishVideo(video *publish.Video) error
+	PublishList(userId int64) []*publish.Video
 }
 
 type VideoServiceImp struct {
@@ -29,7 +31,7 @@ func GetVideoService() VideoService {
 	return videoService
 }
 
-func (v *VideoServiceImp) PublishVideo(video *Video) error {
+func (v *VideoServiceImp) PublishVideo(video *publish.Video) error {
 	_, err := GetVideoDao().FindByPlayUrl(video.CoverUrl)
 	if err == nil {
 		fmt.Println("video is already exist , don't Publish again")
@@ -41,4 +43,13 @@ func (v *VideoServiceImp) PublishVideo(video *Video) error {
 		return err
 	}
 	return err
+}
+
+func (v *VideoServiceImp) PublishList(userId int64) []*publish.Video {
+	VideoList, err := GetVideoDao().QueryVideoByUserId(userId)
+	if err != nil {
+		fmt.Println("PublishList fail:", err)
+		return make([]*publish.Video, 0)
+	}
+	return VideoList
 }

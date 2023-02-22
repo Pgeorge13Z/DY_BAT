@@ -14,11 +14,6 @@ struct User {
     11: optional i64 favorite_count, //点赞数量
 }
 
-// 基础返回信息 包括状态码和状态描述
-struct BaseResp {
-    1: required i32 status_code,   // 状态码，0-成功，其他值-失败
-    2: optional string statsu_msg, // 返回状态描述
-}
 
 // 用户注册接口
 struct douyin_user_register_request {
