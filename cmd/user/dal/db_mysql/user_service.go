@@ -55,11 +55,17 @@ func (u *UserServiceImpl) UserRegister(username string, password string, salt st
 	}
 	//添加用户
 	userAdd := User{
-		Username:      username,
-		Password:      password,
-		Salt:          salt,
-		FollowCount:   0,
-		FollowerCount: 0,
+		Username:        username,
+		Password:        password,
+		IsFollow:        false,
+		Salt:            salt,
+		FollowCount:     0,
+		FollowerCount:   0,
+		TotalFavorite:   0,
+		workCount:       0,
+		favoriteCount:   0,
+		BackgroundImage: " ",
+		Signature:       " ",
 	}
 	e := u.userDao.AddUser(&userAdd)
 	if e != nil {

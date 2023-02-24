@@ -3,11 +3,15 @@
 package api
 
 import (
-	api "DY_BAT/cmd/api/biz/model/api"
 	"DY_BAT/cmd/api/biz/rpc"
+	"DY_BAT/cmd/publish/kitex_gen/publish"
 	"DY_BAT/cmd/user/kitex_gen/user"
+	"bytes"
 	"context"
 	"fmt"
+	"io"
+
+	api "DY_BAT/cmd/api/biz/model/api"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
@@ -103,4 +107,97 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 	fmt.Printf("%#v", resp)
 
 	c.JSON(consts.StatusOK, resp)
+
+	//type UserInfoResponse struct {
+	//	StatusCode int32       `json:"status_code"`
+	//	StatusMsg  *string      `json:"status_msg"`
+	//	User       interface{} `json:"user"`
+	//}
+	//
+	//c.JSON(consts.StatusOK,UserInfoResponse{
+	//	StatusMsg: userResp.StatusMsg,
+	//	StatusCode: userResp.StatusCode,
+	//	User: userResp.User,
+
+	//})
+}
+
+// PublishAction .
+// @router /douyin/publish/action/ [POST]
+func PublishAction(ctx context.Context, c *app.RequestContext) {
+	//var err error
+	//var req api.DouyinPublishActionRequest
+	//err = c.BindAndValidate(&req)
+	//if err != nil {
+	//	fmt.Println("======")
+	//	c.String(consts.StatusBadRequest, err.Error())
+	//	return
+	//}
+
+	token := c.FormValue("token")
+	title := c.FormValue("title")
+
+	//resp := new(api.DouyinPublishActionResponse)
+	resp := &api.DouyinPublishActionResponse{StatusMsg: &msg}
+
+	//将file类型的文件解析为[]byte
+
+	data, _ := c.FormFile("data")
+	file, _ := data.Open()
+	defer file.Close()
+
+	buf := bytes.NewBuffer(nil)
+
+	if _, err := io.Copy(buf, file); err != nil {
+		fmt.Println("io copy fail", err)
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	Video := buf.Bytes()
+
+	PublishRsp, _ := rpc.PublishAction(ctx, &publish.DouyinPublishActionRequest{
+		Title: string(title),
+		Token: string(token),
+		Data:  Video,
+	})
+
+	resp.StatusMsg = PublishRsp.StatusMsg
+	resp.StatusCode = PublishRsp.StatusCode
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// PublishList .
+// @router /douyin/publish/list/ [GET]
+func PublishList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.DouyinPublishListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	//resp := new(api.DouyinPublishListResponse)
+
+	//resp := &api.DouyinPublishListResponse{StatusMsg: &msg, VideoList: make([]*api.Video, 0)}
+
+	userid := req.GetUserID()
+	token := req.GetToken()
+
+	PublishListRsp, _ := rpc.PublishList(ctx, &publish.DouyinPublishListRequest{UserId: userid, Token: token})
+
+	type PublishListResponse struct {
+		VideoList  interface{} `json:"video_list"`
+		StatusCode int32       ` json:"status_code" `
+		StatusMsg  string      ` json:"status_msg" `
+	}
+
+	c.JSON(consts.StatusOK, PublishListResponse{
+		VideoList:  PublishListRsp.VideoList,
+		StatusCode: PublishListRsp.StatusCode,
+		StatusMsg:  *PublishListRsp.StatusMsg,
+	})
 }

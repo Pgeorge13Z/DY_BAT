@@ -3,24 +3,35 @@
 package publish
 
 import (
-	"DY_BAT/cmd/user/kitex_gen/user"
 	"bytes"
 	"context"
 	"fmt"
 	"github.com/apache/thrift/lib/go/thrift"
+	"gorm.io/gorm"
 	"strings"
 )
 
+
+
+const TableNameUser string = "video"
+
+
 type Video struct {
-	Id            int64      `thrift:"id,1,required" frugal:"1,required,i64" json:"id"`
-	Author        *user.User `thrift:"author,2,required" frugal:"2,required,user.User" json:"author"`
-	PlayUrl       string     `thrift:"play_url,3,required" frugal:"3,required,string" json:"play_url"`
-	CoverUrl      string     `thrift:"cover_url,4,required" frugal:"4,required,string" json:"cover_url"`
-	FavoriteCount int64      `thrift:"favorite_count,5,required" frugal:"5,required,i64" json:"favorite_count"`
-	CommentCount  int64      `thrift:"comment_count,6,required" frugal:"6,required,i64" json:"comment_count"`
-	IsFavorite    bool       `thrift:"is_favorite,7,required" frugal:"7,required,bool" json:"is_favorite"`
-	Title         string     `thrift:"title,8,required" frugal:"8,required,string" json:"title"`
+	gorm.Model
+	Id            int64  `thrift:"id,1,required" frugal:"1,required,i64" json:"id" gorm:"index,unique;not null;PRIMARY_KEY"`
+	Userid        int64  `thrift:"userid,2,required" frugal:"2,required,i64" json:"user_id"`
+	PlayUrl       string     `thrift:"play_url,3,required" frugal:"3,required,string" json:"play_url" gorm:"not null"`
+	CoverUrl      string     `thrift:"cover_url,4,required" frugal:"4,required,string" json:"cover_url" gorm:"not null"`
+	FavoriteCount int64      `thrift:"favorite_count,5,required" frugal:"5,required,i64" json:"favorite_count" gorm:"default:0"`
+	CommentCount  int64      `thrift:"comment_count,6,required" frugal:"6,required,i64" json:"comment_count" gorm:"default:0"`
+	IsFavorite    bool       `thrift:"is_favorite,7,required" frugal:"7,required,bool" json:"is_favorite" gorm:"not null"`
+	Title         string     `thrift:"title,8,required" frugal:"8,required,string" json:"title" gorm:"not null"`
 }
+
+func (u *Video) TableName() string {
+	return TableNameUser
+}
+
 
 func NewVideo() *Video {
 	return &Video{}
@@ -34,13 +45,8 @@ func (p *Video) GetId() (v int64) {
 	return p.Id
 }
 
-var Video_Author_DEFAULT *user.User
-
-func (p *Video) GetAuthor() (v *user.User) {
-	if !p.IsSetAuthor() {
-		return Video_Author_DEFAULT
-	}
-	return p.Author
+func (p *Video) GetUserid() (v int64) {
+	return p.Userid
 }
 
 func (p *Video) GetPlayUrl() (v string) {
@@ -69,8 +75,8 @@ func (p *Video) GetTitle() (v string) {
 func (p *Video) SetId(val int64) {
 	p.Id = val
 }
-func (p *Video) SetAuthor(val *user.User) {
-	p.Author = val
+func (p *Video) SetUserid(val int64) {
+	p.Userid = val
 }
 func (p *Video) SetPlayUrl(val string) {
 	p.PlayUrl = val
@@ -93,7 +99,7 @@ func (p *Video) SetTitle(val string) {
 
 var fieldIDToName_Video = map[int16]string{
 	1: "id",
-	2: "author",
+	2: "userid",
 	3: "play_url",
 	4: "cover_url",
 	5: "favorite_count",
@@ -102,16 +108,12 @@ var fieldIDToName_Video = map[int16]string{
 	8: "title",
 }
 
-func (p *Video) IsSetAuthor() bool {
-	return p.Author != nil
-}
-
 func (p *Video) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetId bool = false
-	var issetAuthor bool = false
+	var issetUserid bool = false
 	var issetPlayUrl bool = false
 	var issetCoverUrl bool = false
 	var issetFavoriteCount bool = false
@@ -145,11 +147,11 @@ func (p *Video) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 2:
-			if fieldTypeId == thrift.STRUCT {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetAuthor = true
+				issetUserid = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -240,7 +242,7 @@ func (p *Video) Read(iprot thrift.TProtocol) (err error) {
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetAuthor {
+	if !issetUserid {
 		fieldId = 2
 		goto RequiredFieldNotSetError
 	}
@@ -302,9 +304,10 @@ func (p *Video) ReadField1(iprot thrift.TProtocol) error {
 }
 
 func (p *Video) ReadField2(iprot thrift.TProtocol) error {
-	p.Author = user.NewUser()
-	if err := p.Author.Read(iprot); err != nil {
+	if v, err := iprot.ReadI64(); err != nil {
 		return err
+	} else {
+		p.Userid = v
 	}
 	return nil
 }
@@ -438,10 +441,10 @@ WriteFieldEndError:
 }
 
 func (p *Video) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("author", thrift.STRUCT, 2); err != nil {
+	if err = oprot.WriteFieldBegin("userid", thrift.I64, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := p.Author.Write(oprot); err != nil {
+	if err := oprot.WriteI64(p.Userid); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -572,7 +575,7 @@ func (p *Video) DeepEqual(ano *Video) bool {
 	if !p.Field1DeepEqual(ano.Id) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.Author) {
+	if !p.Field2DeepEqual(ano.Userid) {
 		return false
 	}
 	if !p.Field3DeepEqual(ano.PlayUrl) {
@@ -603,9 +606,9 @@ func (p *Video) Field1DeepEqual(src int64) bool {
 	}
 	return true
 }
-func (p *Video) Field2DeepEqual(src *user.User) bool {
+func (p *Video) Field2DeepEqual(src int64) bool {
 
-	if !p.Author.DeepEqual(src) {
+	if p.Userid != src {
 		return false
 	}
 	return true
@@ -959,7 +962,7 @@ func (p *DouyinPublishActionRequest) Field3DeepEqual(src string) bool {
 
 type DouyinPublishActionResponse struct {
 	StatusCode int32   `thrift:"status_code,1,required" frugal:"1,required,i32" json:"status_code"`
-	StatsuMsg  *string `thrift:"statsu_msg,2,optional" frugal:"2,optional,string" json:"statsu_msg,omitempty"`
+	StatusMsg  *string `thrift:"status_msg,2,optional" frugal:"2,optional,string" json:"status_msg,omitempty"`
 }
 
 func NewDouyinPublishActionResponse() *DouyinPublishActionResponse {
@@ -974,28 +977,28 @@ func (p *DouyinPublishActionResponse) GetStatusCode() (v int32) {
 	return p.StatusCode
 }
 
-var DouyinPublishActionResponse_StatsuMsg_DEFAULT string
+var DouyinPublishActionResponse_StatusMsg_DEFAULT string
 
-func (p *DouyinPublishActionResponse) GetStatsuMsg() (v string) {
-	if !p.IsSetStatsuMsg() {
-		return DouyinPublishActionResponse_StatsuMsg_DEFAULT
+func (p *DouyinPublishActionResponse) GetStatusMsg() (v string) {
+	if !p.IsSetStatusMsg() {
+		return DouyinPublishActionResponse_StatusMsg_DEFAULT
 	}
-	return *p.StatsuMsg
+	return *p.StatusMsg
 }
 func (p *DouyinPublishActionResponse) SetStatusCode(val int32) {
 	p.StatusCode = val
 }
-func (p *DouyinPublishActionResponse) SetStatsuMsg(val *string) {
-	p.StatsuMsg = val
+func (p *DouyinPublishActionResponse) SetStatusMsg(val *string) {
+	p.StatusMsg = val
 }
 
 var fieldIDToName_DouyinPublishActionResponse = map[int16]string{
 	1: "status_code",
-	2: "statsu_msg",
+	2: "status_msg",
 }
 
-func (p *DouyinPublishActionResponse) IsSetStatsuMsg() bool {
-	return p.StatsuMsg != nil
+func (p *DouyinPublishActionResponse) IsSetStatusMsg() bool {
+	return p.StatusMsg != nil
 }
 
 func (p *DouyinPublishActionResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -1088,7 +1091,7 @@ func (p *DouyinPublishActionResponse) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.StatsuMsg = &v
+		p.StatusMsg = &v
 	}
 	return nil
 }
@@ -1144,11 +1147,11 @@ WriteFieldEndError:
 }
 
 func (p *DouyinPublishActionResponse) writeField2(oprot thrift.TProtocol) (err error) {
-	if p.IsSetStatsuMsg() {
-		if err = oprot.WriteFieldBegin("statsu_msg", thrift.STRING, 2); err != nil {
+	if p.IsSetStatusMsg() {
+		if err = oprot.WriteFieldBegin("status_msg", thrift.STRING, 2); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(*p.StatsuMsg); err != nil {
+		if err := oprot.WriteString(*p.StatusMsg); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -1178,7 +1181,7 @@ func (p *DouyinPublishActionResponse) DeepEqual(ano *DouyinPublishActionResponse
 	if !p.Field1DeepEqual(ano.StatusCode) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.StatsuMsg) {
+	if !p.Field2DeepEqual(ano.StatusMsg) {
 		return false
 	}
 	return true
@@ -1193,12 +1196,12 @@ func (p *DouyinPublishActionResponse) Field1DeepEqual(src int32) bool {
 }
 func (p *DouyinPublishActionResponse) Field2DeepEqual(src *string) bool {
 
-	if p.StatsuMsg == src {
+	if p.StatusMsg == src {
 		return true
-	} else if p.StatsuMsg == nil || src == nil {
+	} else if p.StatusMsg == nil || src == nil {
 		return false
 	}
-	if strings.Compare(*p.StatsuMsg, *src) != 0 {
+	if strings.Compare(*p.StatusMsg, *src) != 0 {
 		return false
 	}
 	return true
@@ -1444,7 +1447,7 @@ func (p *DouyinPublishListRequest) Field2DeepEqual(src string) bool {
 
 type DouyinPublishListResponse struct {
 	StatusCode int32    `thrift:"status_code,1,required" frugal:"1,required,i32" json:"status_code"`
-	StatsuMsg  *string  `thrift:"statsu_msg,2,optional" frugal:"2,optional,string" json:"statsu_msg,omitempty"`
+	StatusMsg  *string  `thrift:"status_msg,2,optional" frugal:"2,optional,string" json:"status_msg,omitempty"`
 	VideoList  []*Video `thrift:"video_list,3,required" frugal:"3,required,list<Video>" json:"video_list"`
 }
 
@@ -1460,13 +1463,13 @@ func (p *DouyinPublishListResponse) GetStatusCode() (v int32) {
 	return p.StatusCode
 }
 
-var DouyinPublishListResponse_StatsuMsg_DEFAULT string
+var DouyinPublishListResponse_StatusMsg_DEFAULT string
 
-func (p *DouyinPublishListResponse) GetStatsuMsg() (v string) {
-	if !p.IsSetStatsuMsg() {
-		return DouyinPublishListResponse_StatsuMsg_DEFAULT
+func (p *DouyinPublishListResponse) GetStatusMsg() (v string) {
+	if !p.IsSetStatusMsg() {
+		return DouyinPublishListResponse_StatusMsg_DEFAULT
 	}
-	return *p.StatsuMsg
+	return *p.StatusMsg
 }
 
 func (p *DouyinPublishListResponse) GetVideoList() (v []*Video) {
@@ -1475,8 +1478,8 @@ func (p *DouyinPublishListResponse) GetVideoList() (v []*Video) {
 func (p *DouyinPublishListResponse) SetStatusCode(val int32) {
 	p.StatusCode = val
 }
-func (p *DouyinPublishListResponse) SetStatsuMsg(val *string) {
-	p.StatsuMsg = val
+func (p *DouyinPublishListResponse) SetStatusMsg(val *string) {
+	p.StatusMsg = val
 }
 func (p *DouyinPublishListResponse) SetVideoList(val []*Video) {
 	p.VideoList = val
@@ -1484,12 +1487,12 @@ func (p *DouyinPublishListResponse) SetVideoList(val []*Video) {
 
 var fieldIDToName_DouyinPublishListResponse = map[int16]string{
 	1: "status_code",
-	2: "statsu_msg",
+	2: "status_msg",
 	3: "video_list",
 }
 
-func (p *DouyinPublishListResponse) IsSetStatsuMsg() bool {
-	return p.StatsuMsg != nil
+func (p *DouyinPublishListResponse) IsSetStatusMsg() bool {
+	return p.StatusMsg != nil
 }
 
 func (p *DouyinPublishListResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -1599,7 +1602,7 @@ func (p *DouyinPublishListResponse) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.StatsuMsg = &v
+		p.StatusMsg = &v
 	}
 	return nil
 }
@@ -1679,11 +1682,11 @@ WriteFieldEndError:
 }
 
 func (p *DouyinPublishListResponse) writeField2(oprot thrift.TProtocol) (err error) {
-	if p.IsSetStatsuMsg() {
-		if err = oprot.WriteFieldBegin("statsu_msg", thrift.STRING, 2); err != nil {
+	if p.IsSetStatusMsg() {
+		if err = oprot.WriteFieldBegin("status_msg", thrift.STRING, 2); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(*p.StatsuMsg); err != nil {
+		if err := oprot.WriteString(*p.StatusMsg); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -1738,7 +1741,7 @@ func (p *DouyinPublishListResponse) DeepEqual(ano *DouyinPublishListResponse) bo
 	if !p.Field1DeepEqual(ano.StatusCode) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.StatsuMsg) {
+	if !p.Field2DeepEqual(ano.StatusMsg) {
 		return false
 	}
 	if !p.Field3DeepEqual(ano.VideoList) {
@@ -1756,12 +1759,12 @@ func (p *DouyinPublishListResponse) Field1DeepEqual(src int32) bool {
 }
 func (p *DouyinPublishListResponse) Field2DeepEqual(src *string) bool {
 
-	if p.StatsuMsg == src {
+	if p.StatusMsg == src {
 		return true
-	} else if p.StatsuMsg == nil || src == nil {
+	} else if p.StatusMsg == nil || src == nil {
 		return false
 	}
-	if strings.Compare(*p.StatsuMsg, *src) != 0 {
+	if strings.Compare(*p.StatusMsg, *src) != 0 {
 		return false
 	}
 	return true

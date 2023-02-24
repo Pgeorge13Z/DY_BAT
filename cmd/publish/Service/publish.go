@@ -3,14 +3,10 @@ package Service
 import (
 	"DY_BAT/cmd/publish/dal"
 	"DY_BAT/cmd/publish/kitex_gen/publish"
-	"DY_BAT/cmd/user/dal/db_mysql"
-
 	"DY_BAT/pkg/tools"
 	"context"
 	"errors"
 	"fmt"
-	"github.com/godruoyi/go-snowflake"
-	"strconv"
 	"strings"
 )
 
@@ -32,13 +28,15 @@ func (s *PublishService) PublishAction(req *publish.DouyinPublishActionRequest) 
 		return err
 	}
 	UserID := Claims.User_id
+	UserName := Claims.Username
 
-	author, _ := db_mysql.GetUserService().GetUserById(UserID)
+	//author, _ := db_mysql.GetUserService().GetUserById(UserID)
 
-	SnowflakeId := snowflake.ID()
-	filename := strings.Join([]string{strconv.Itoa(int(SnowflakeId)), ".mp4"}, "")
+	//SnowflakeId := snowflake.ID()
+	//filename := strings.Join([]string{strconv.Itoa(int(SnowflakeId)), ".mp4"}, "")
+	filename := strings.Join([]string{UserName, "_", Title, ".mp4"}, "")
 
-	filePath := strings.Join([]string{tools.GetPath(), "/public/", filename}, "")
+	filePath := strings.Join([]string{tools.GetPath(), "/video/", filename}, "")
 
 	//上传视频到本地,后续可更改为上传到OSS
 	err = tools.PublishVideoToPublic(Data, filePath)
@@ -62,7 +60,7 @@ func (s *PublishService) PublishAction(req *publish.DouyinPublishActionRequest) 
 		FavoriteCount: 0,
 		CommentCount:  0,
 		IsFavorite:    false, //这里默认写false,需要调用点赞的接口
-		Author:        author,
+		Userid:        UserID,
 	}
 
 	err = dal.GetVideoService().PublishVideo(video)

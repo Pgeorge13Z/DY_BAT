@@ -8,9 +8,9 @@ import (
 )
 
 func main() {
-
+	rpc.InitRPC()
 	h := server.Default()
-	rpc.InitUser()
+
 	register(h)
 	h.Spin()
 }

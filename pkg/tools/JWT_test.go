@@ -6,7 +6,7 @@ import (
 )
 
 func TestGenToken(t *testing.T) {
-	Token, _ := GenToken("zxj6", 7)
+	Token, _ := GenToken("hello", 5)
 
 	fmt.Println(Token)
 

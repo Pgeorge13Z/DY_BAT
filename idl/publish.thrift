@@ -4,7 +4,8 @@ namespace go publish
 
 struct Video {
     1: required i64 id,             // 视频唯一表示
-    2: required user.User author,        // 视频作者信息
+    //2: required user.User author,        // 视频作者信息
+    2: required i64 userid,
     3: required string play_url,    // 视频播放地址
     4: required string cover_url,   // 视频封面地址
     5: required i64 favorite_count, // 视频的点赞总数
@@ -22,7 +23,7 @@ struct douyin_publish_action_request  {
 
 struct douyin_publish_action_response  {
     1: required i32 status_code,   // 状态码，0-成功，其他值-失败
-    2: optional string statsu_msg, // 返回状态描述
+    2: optional string status_msg, // 返回状态描述
 }
 
 struct douyin_publish_list_request  {
@@ -32,7 +33,7 @@ struct douyin_publish_list_request  {
 
 struct douyin_publish_list_response   {
     1: required i32 status_code,   // 状态码，0-成功，其他值-失败
-    2: optional string statsu_msg, // 返回状态描述
+    2: optional string status_msg, // 返回状态描述
     3: required list<Video> video_list,
 }
 

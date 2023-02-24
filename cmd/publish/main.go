@@ -9,6 +9,7 @@ import (
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	etcd "github.com/kitex-contrib/registry-etcd"
+	"log"
 	"net"
 )
 
@@ -27,12 +28,17 @@ func main() {
 
 	dal.Init()
 
-	publishservice.NewServer(new(PublishServiceImpl),
+	svr := publishservice.NewServer(new(PublishServiceImpl),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: consts.PublishServiceName}),
 		server.WithServiceAddr(&net.TCPAddr{Port: consts.PublishServicePort}),
 		server.WithLimit(&limit.Option{MaxConnections: 1000, MaxQPS: 200}),
 		//server.WithMuxTransport(),
 		server.WithRegistry(r),
 	)
+
+	err = svr.Run()
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
 
 }

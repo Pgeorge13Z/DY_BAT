@@ -42,22 +42,14 @@ func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.DouyinUser
 		resp.StatusCode = fail
 
 	} else {
-		token, err := tools.GenToken(username, userIdSequence)
-		if err != nil {
-			resp.UserId = 0
-			resp.Token = " "
-			msg = "token generation failed" + err.Error()
-			resp.StatusMsg = &msg
-			resp.StatusCode = fail
-		} else {
-			msg = "UserRegister successfully"
-			//此处有一个bug,记录个数为0和1的时候，主键都为1，因此第一条记录的id为2，本项目将第一条记录内置，因此默认是从第二条记录开始使用.
-			atomic.AddInt64(&userIdSequence, 1)
-			resp.UserId = userIdSequence
-			resp.Token = token
-			resp.StatusMsg = &msg
-			resp.StatusCode = success
-		}
+		msg = "UserRegister successfully"
+		//此处有一个bug,记录个数为0和1的时候，主键都为1，因此第一条记录的id为2，本项目将第一条记录内置，因此默认是从第二条记录开始使用.
+		atomic.AddInt64(&userIdSequence, 1)
+		token, _ := tools.GenToken(username, userIdSequence)
+		resp.UserId = userIdSequence
+		resp.Token = token
+		resp.StatusMsg = &msg
+		resp.StatusCode = success
 
 	}
 

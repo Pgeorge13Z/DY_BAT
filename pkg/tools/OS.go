@@ -14,7 +14,6 @@ func GetPath() string {
 		panic(err)
 	}
 	Path := strings.Split(dir, "/cmd")[0]
-	fmt.Println(Path)
 	return Path
 
 }

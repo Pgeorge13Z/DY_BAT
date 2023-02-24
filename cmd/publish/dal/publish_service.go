@@ -3,6 +3,7 @@ package dal
 import (
 	"DY_BAT/cmd/publish/kitex_gen/publish"
 	sqlscript "DY_BAT/sql/script"
+	"errors"
 	"fmt"
 	"gorm.io/gorm"
 	"sync"
@@ -32,11 +33,13 @@ func GetVideoService() VideoService {
 }
 
 func (v *VideoServiceImp) PublishVideo(video *publish.Video) error {
-	_, err := GetVideoDao().FindByPlayUrl(video.CoverUrl)
+	var err error
+	_, err = GetVideoDao().FindByPlayUrl(video.PlayUrl)
 	if err == nil {
+		fmt.Println(err)
 		fmt.Println("video is already exist , don't Publish again")
-		return err
-		//return errors.New("video is already exist , don't Publish again")
+		//return err
+		return errors.New("video is already exist , don't Publish again")
 	}
 
 	if err = GetVideoDao().AddVideo(video); err != nil {
