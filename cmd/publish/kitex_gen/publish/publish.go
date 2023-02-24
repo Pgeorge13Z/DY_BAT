@@ -19,7 +19,7 @@ const TableNameUser string = "video"
 type Video struct {
 	gorm.Model
 	Id            int64  `thrift:"id,1,required" frugal:"1,required,i64" json:"id" gorm:"index,unique;not null;PRIMARY_KEY"`
-	Userid        int64  `thrift:"userid,2,required" frugal:"2,required,i64" json:"user_id"`
+	Userid        int64  `thrift:"user_id,2,required" frugal:"2,required,i64" json:"user_id" gorm:"column:user_id"`
 	PlayUrl       string     `thrift:"play_url,3,required" frugal:"3,required,string" json:"play_url" gorm:"not null"`
 	CoverUrl      string     `thrift:"cover_url,4,required" frugal:"4,required,string" json:"cover_url" gorm:"not null"`
 	FavoriteCount int64      `thrift:"favorite_count,5,required" frugal:"5,required,i64" json:"favorite_count" gorm:"default:0"`

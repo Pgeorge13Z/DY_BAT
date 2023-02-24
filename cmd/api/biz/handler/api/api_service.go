@@ -96,15 +96,12 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 	resp.User.FollowerCount = userResp.User.FollowerCount
 	resp.User.FollowCount = userResp.User.FollowCount
 	resp.User.IsFollow = userResp.User.IsFollow
-	fmt.Println(resp.User.IsFollow)
 	resp.User.Avatar = userResp.User.Avatar
-	fmt.Println(resp.User.Avatar)
 	resp.User.BackgroundImage = userResp.User.BackgroundImage
 	resp.User.Signature = userResp.User.Signature
 	resp.User.TotaolFavorited = userResp.User.TotaolFavorited
 	resp.User.WorkCount = userResp.User.WorkCount
 	resp.User.FavoriteCount = userResp.User.FavoriteCount
-	fmt.Printf("%#v", resp)
 
 	c.JSON(consts.StatusOK, resp)
 
@@ -195,9 +192,40 @@ func PublishList(ctx context.Context, c *app.RequestContext) {
 		StatusMsg  string      ` json:"status_msg" `
 	}
 
+	type VideoResponse struct {
+		Id            int64       `json:"id" `
+		Author        interface{} `json:"author"`
+		PlayUrl       string      ` json:"play_url" `
+		CoverUrl      string      `json:"cover_url"`
+		FavoriteCount int64       `json:"favorite_count"`
+		CommentCount  int64       `json:"comment_count"`
+		IsFavorite    bool        `json:"is_favorite"`
+		Title         string      `json:"title"`
+	}
+
+	VideoRes := make([]*VideoResponse, 0)
+
+	VideoList := PublishListRsp.VideoList
+
+	for _, video := range VideoList {
+		userResp, _ := rpc.GetUserInfo(ctx, &user.DouyinUserRequest{UserId: userid, Token: token})
+
+		VideoResItem := &VideoResponse{
+			Id:            video.Id,
+			Author:        userResp.User,
+			PlayUrl:       video.PlayUrl,
+			CoverUrl:      video.CoverUrl,
+			FavoriteCount: video.FavoriteCount,
+			CommentCount:  video.CommentCount,
+			IsFavorite:    video.IsFavorite,
+			Title:         video.Title,
+		}
+		VideoRes = append(VideoRes, VideoResItem)
+	}
+
 	c.JSON(consts.StatusOK, PublishListResponse{
-		VideoList:  PublishListRsp.VideoList,
 		StatusCode: PublishListRsp.StatusCode,
 		StatusMsg:  *PublishListRsp.StatusMsg,
+		VideoList:  VideoRes,
 	})
 }
