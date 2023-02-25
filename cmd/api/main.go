@@ -8,9 +8,12 @@ import (
 )
 
 func main() {
-
+	// hertz server
 	h := server.Default()
+
+	// middleware
 	rpc.InitUser()
+	rpc.InitFavorite()
 	register(h)
 	h.Spin()
 }

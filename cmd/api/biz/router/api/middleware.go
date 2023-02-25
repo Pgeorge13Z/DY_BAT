@@ -45,3 +45,18 @@ func _userregisterMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _favoriteMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _favorite_ctionMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _favoritelistMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

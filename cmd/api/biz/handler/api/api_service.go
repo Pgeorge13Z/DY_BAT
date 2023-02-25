@@ -5,11 +5,13 @@ package api
 import (
 	api "DY_BAT/cmd/api/biz/model/api"
 	"DY_BAT/cmd/api/biz/rpc"
+	"DY_BAT/cmd/favorite/kitex_gen/favorite"
 	"DY_BAT/cmd/user/kitex_gen/user"
 	"context"
 	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"strconv"
 )
 
 var msg string
@@ -100,6 +102,85 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 	resp.User.TotaolFavorited = userResp.User.TotaolFavorited
 	resp.User.WorkCount = userResp.User.WorkCount
 	resp.User.FavoriteCount = userResp.User.FavoriteCount
+	fmt.Printf("%#v", resp)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// FavoriteAction .
+// @router /douyin/favorite/action [POST]
+func FavoriteAction(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.DouyinFavoriteActionRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	//resp := new(api.DouyinFavoriteActionResponse)
+	resp := &api.DouyinFavoriteActionResponse{StatusMsg: &msg}
+	token := c.Query("token")
+	video_id := c.Query("video_id")
+	action_type := c.Query("action_type")
+	vid, _ := strconv.ParseInt(video_id, 10, 64)
+	aty, _ := strconv.ParseInt(action_type, 10, 32)
+
+	favoriteResp, _ := rpc.ActionFavorite(ctx, &favorite.DouyinFavoriteActionRequest{
+		Token:      token,
+		VideoId:    vid,
+		ActionType: int32(aty),
+	})
+	resp.StatusMsg = favoriteResp.StatusMsg
+	resp.StatusCode = favoriteResp.StatusCode
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// FavoriteList .
+// @router /douyin/favorite/list [GET]
+func FavoriteList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.DouyinFavoriteListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	//resp := new(api.DouyinFavoriteListResponse)
+	Userid := req.GetUserID()
+	token := req.GetToken()
+	favoriteResp, err := rpc.ListFavorite(ctx, &favorite.DouyinFavoriteListRequest{UserId: Userid, Token: token})
+	size := len(favoriteResp.VideoList)
+	video := make([]*api.Video, size)
+
+	for i := 0; i < size; i++ {
+		video[i] = new(api.Video)
+		video[i].ID = favoriteResp.VideoList[i].Id
+		video[i].IsFavorite = favoriteResp.VideoList[i].IsFavorite
+		video[i].FavoriteCount = favoriteResp.VideoList[i].FavoriteCount
+		video[i].CoverURL = favoriteResp.VideoList[i].CoverUrl
+		video[i].Title = favoriteResp.VideoList[i].Title
+		video[i].PlayURL = favoriteResp.VideoList[i].PlayUrl
+		video[i].CommentCount = favoriteResp.VideoList[i].CommentCount
+
+		video[i].Author = new(api.User)
+		video[i].Author.ID = favoriteResp.VideoList[i].Id
+		video[i].Author.Avatar = favoriteResp.VideoList[i].Author.Avatar
+		video[i].Author.FavoriteCount = favoriteResp.VideoList[i].Author.FavoriteCount
+		video[i].Author.WorkCount = favoriteResp.VideoList[i].Author.WorkCount
+		video[i].Author.Signature = favoriteResp.VideoList[i].Author.Signature
+		video[i].Author.BackgroundImage = favoriteResp.VideoList[i].Author.BackgroundImage
+		video[i].Author.IsFollow = favoriteResp.VideoList[i].Author.IsFollow
+		video[i].Author.FollowerCount = favoriteResp.VideoList[i].Author.FollowerCount
+		video[i].Author.FollowCount = favoriteResp.VideoList[i].Author.FollowCount
+		video[i].Author.Name = favoriteResp.VideoList[i].Author.Name
+		video[i].Author.TotaolFavorited = favoriteResp.VideoList[i].Author.TotaolFavorited
+	}
+	resp := &api.DouyinFavoriteListResponse{StatusMsg: msg, VideoList: video}
+	resp.StatusCode = favoriteResp.StatusCode
+	resp.StatusMsg = favoriteResp.StatusMsg
 	fmt.Printf("%#v", resp)
 
 	c.JSON(consts.StatusOK, resp)

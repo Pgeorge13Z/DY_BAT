@@ -20,6 +20,11 @@ func Register(r *server.Hertz) {
 	{
 		_douyin := root.Group("/douyin", _douyinMw()...)
 		{
+			_favorite := _douyin.Group("/favorite", _favoriteMw()...)
+			_favorite.POST("/action", append(_favorite_ctionMw(), api.FavoriteAction)...)
+			_favorite.GET("/list", append(_favoritelistMw(), api.FavoriteList)...)
+		}
+		{
 			_user := _douyin.Group("/user", _userMw()...)
 			_user.GET("/", append(_userinfoMw(), api.UserInfo)...)
 			{

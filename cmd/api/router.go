@@ -12,4 +12,5 @@ func customizedRegister(r *server.Hertz) {
 	r.GET("/ping", handler.Ping)
 	//r.GET("/ping", handler.Ping)
 	// your code ...
+	// 定义除idl之外的其他路由
 }

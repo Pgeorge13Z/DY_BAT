@@ -14,4 +14,8 @@ const (
 	//publish
 	PublishServiceName = "publish_service"
 	PublishServicePort = 9002
+
+	//favorite
+	FavoriteServiceName = "favorite_service"
+	FavoriteServicePort = 9003
 )
